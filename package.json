@@ -1,0 +1,15 @@
+{
+  "name": "@silverio-labs/qmark-suite",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Silverio Labs <https://silverio-labs.com>",
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@12.4.1",
+  "scripts": {
+    "build": "pnpm --recursive --filter \"./packages/**\" build",
+    "test": "pnpm --recursive test",
+    "typecheck": "pnpm --recursive typecheck"
+  }
+}
