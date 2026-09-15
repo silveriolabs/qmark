@@ -1,0 +1,186 @@
+version: 1.0.0
+name: Quiz 1
+# type: multiple-choice | multiple-select | boolean | fill-blank | short-answer | matching | ordering
+# photo and photo_anchor are optional
+sections:
+  - sectionType: Multiple choice
+    instructions: Select the correct answer from the options provided.
+    goal: Test knowledge of European capital cities.
+    questions:
+      - question: What is the capital of France?
+        answer: Paris
+        photo: https://example.com/france.jpg
+        photo_anchor: top-left
+        theme: France
+        difficulty: easy
+        type: multiple-choice
+        options:
+          - Paris
+          - London
+          - Berlin
+
+      - question: What is the capital of Italy?
+        answer: Rome
+        theme: Italy
+        difficulty: easy
+        type: multiple-choice
+        options:
+          - Rome
+          - Milan
+          - Naples
+
+  - sectionType: Boolean
+    instructions: Decide whether each statement is true or false.
+    goal: Test knowledge of European capital cities.
+    questions:
+      - question: Berlin is the capital of Germany.
+        answer: true
+        photo: https://example.com/germany.jpg
+        photo_anchor: top-left
+        theme: Germany
+        difficulty: easy
+        type: boolean
+
+      - question: Madrid is the capital of Portugal.
+        answer: false
+        theme: Portugal
+        difficulty: easy
+        type: boolean
+
+  - sectionType: Multiple select
+    instructions: Select all correct answers from the options provided.
+    goal: Test knowledge of cities in Italy and Spain.
+    questions:
+      - question: Which cities are in Italy?
+        answer:
+          - Rome
+          - Milan
+        photo: https://example.com/italy.jpg
+        photo_anchor: top-left
+        theme: Italy
+        difficulty: easy
+        type: multiple-select
+        options:
+          - Rome
+          - Milan
+          - Madrid
+
+      - question: Which cities are in Spain?
+        answer:
+          - Madrid
+          - Barcelona
+        theme: Spain
+        difficulty: easy
+        type: multiple-select
+        options:
+          - Madrid
+          - Barcelona
+          - Lisbon
+
+  - sectionType: Fill in the blank
+    instructions: Fill in the blank with the correct word.
+    goal: Test recall of European capital cities.
+    questions:
+      - question: The capital of Italy is ____.
+        answer: Rome
+        photo: https://example.com/italy.jpg
+        photo_anchor: top-left
+        theme: Italy
+        difficulty: easy
+        type: fill-blank
+
+      - question: The capital of France is ____.
+        answer: Paris
+        theme: France
+        difficulty: easy
+        type: fill-blank
+
+  - sectionType: Short answer
+    instructions: Type the correct answer.
+    goal: Test recall of European capital cities.
+    questions:
+      - question: What is the capital of Spain?
+        answer: Madrid
+        photo: https://example.com/spain.jpg
+        photo_anchor: top-left
+        theme: Spain
+        difficulty: easy
+        type: short-answer
+
+      - question: What is the capital of Portugal?
+        answer: Lisbon
+        theme: Portugal
+        difficulty: easy
+        type: short-answer
+
+  - sectionType: Matching
+    instructions: Match each country to its capital.
+    goal: Test pairing of countries and capital cities.
+    questions:
+      - question: Match each country to its capital.
+        answer:
+          France: Paris
+          Germany: Berlin
+          Italy: Rome
+        photo: https://example.com/europe.jpg
+        photo_anchor: top-left
+        theme: Europe
+        difficulty: medium
+        type: matching
+        left:
+          - France
+          - Germany
+          - Italy
+        right:
+          - Paris
+          - Berlin
+          - Rome
+
+      - question: Match each country to its capital.
+        answer:
+          Spain: Madrid
+          Portugal: Lisbon
+          Greece: Athens
+        theme: Europe
+        difficulty: medium
+        type: matching
+        left:
+          - Spain
+          - Portugal
+          - Greece
+        right:
+          - Madrid
+          - Lisbon
+          - Athens
+
+  - sectionType: Ordering
+    instructions: Put the items in the correct order.
+    goal: Test geographic order of European capital cities.
+    questions:
+      - question: Order these capitals from west to east.
+        answer:
+          - Lisbon
+          - Paris
+          - Berlin
+        photo: https://example.com/europe.jpg
+        photo_anchor: top-left
+        theme: Europe
+        difficulty: medium
+        type: ordering
+        options:
+          - Paris
+          - Berlin
+          - Lisbon
+
+      - question: Order these capitals from north to south.
+        answer:
+          - Oslo
+          - Berlin
+          - Rome
+        theme: Europe
+        difficulty: medium
+        type: ordering
+        options:
+          - Rome
+          - Oslo
+          - Berlin
