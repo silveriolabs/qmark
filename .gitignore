@@ -1,0 +1,76 @@
+# ==========================================
+# Dependencies & Package Managers
+# ==========================================
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================================
+# Build & Distribution Outputs
+# ==========================================
+dist/
+build/
+out/
+.next/
+.output/
+*.tsbuildinfo
+
+# ==========================================
+# Testing & Coverage
+# ==========================================
+coverage/
+.nyc_output/
+*.lcov
+.vitest/
+
+# ==========================================
+# Environment & Local Secrets
+# ==========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+
+# ==========================================
+# IDE & System Files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor configurations (Optional/Personal overrides)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ==========================================
+# Temporary & Log Files
+# ==========================================
+*.log
+logs/
+*.tmp
+*.temp
+.cache/
+.turbo/
+
+# ==========================================
+# Others
+# ==========================================
+*.yml
