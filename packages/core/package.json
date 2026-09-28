@@ -1,9 +1,9 @@
 {
   "name": "@silverio-labs/qmark-core",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "description": "Client-side YAML-to-Canvas/SVG assessment rendering engine",
   "author": "Silverio Labs <https://silverio-labs.com>",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -16,7 +16,9 @@
   },
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public"

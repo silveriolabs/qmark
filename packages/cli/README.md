@@ -1,11 +1,13 @@
 # @silverio-labs/qmark-cli
 
-Local compiler for QMark quiz folders (`qmark-compose.yml` + optional `*.qmc.yml`).
+Compile a quiz folder (`qmark-compose.yml` plus optional `*.qmc.yml` files) from the terminal.
 
 ```bash
-pnpm build
+npm install -g @silverio-labs/qmark-cli
 qmark compile ./path/to/quiz --pdf
 qmark compile ./path/to/quiz --html
 ```
 
-See [../../README.md](../../README.md) for tier details (`--pptx` requires Pro).
+`--pdf` and `--html` are free. `--pptx` requires a QMark Pro subscription.
+
+Authoring rules and examples: [github.com/silveriolabs/qmark](https://github.com/silveriolabs/qmark).

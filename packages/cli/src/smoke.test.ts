@@ -11,7 +11,9 @@ const files = loadCompileInput(docsDir);
 assert.ok(files.length >= 1);
 
 const ast = compileComposeDirectory(files);
-assert.equal(ast.name, 'Quiz 1');
+assert.equal(ast.name, 'Quiz 1 + Simple Science Quiz');
 assert.ok(ast.sections.length >= 1);
+assert.ok(ast.sources?.includes('qmark-compose.yml'));
+assert.ok(ast.sources?.includes('1-science-quiz.qmc.yml'));
 
 console.log('cli smoke tests passed');

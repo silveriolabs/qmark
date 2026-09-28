@@ -13,7 +13,7 @@ Package the core rendering engine into a single npm library. Pushing updates her
 
 ## Rules
 
-How to write `qmark-compose.yml`. Full example: `_docs/qmark-compose.yml`.
+How to write `qmark-compose.yml`. Full example: `_docs/qmark-compose.yml`. Short module: `_docs/1-science-quiz.qmc.yml`.
 
 ### Project layout
 

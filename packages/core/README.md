@@ -2,25 +2,16 @@
 
 Parse and validate `qmark-compose.yml` (and `*.qmc.yml` modules) into a normalized quiz AST for web UIs and slide export.
 
-Monorepo overview: [../../README.md](../../README.md) · Authoring rules: [../../_docs/ROADMAP.md](../../_docs/ROADMAP.md)
-
-## Layout
-
-| Path | Purpose |
-|------|---------|
-| `src/schema/` | Zod compose schema |
-| `src/parse/` | YAML parsing |
-| `src/compile/` | Directory resolution + AST compile |
-| `src/ast/` | AST types and normalization |
-| `src/export/` | Free-tier HTML slide deck |
-| `src/tier/` | Free vs paid feature gates |
-
-## Scripts
-
 ```bash
-pnpm typecheck
-pnpm test    # compile smoke tests
-pnpm build
+npm install @silverio-labs/qmark-core
 ```
 
-Future roadmap items (Canvas/SVG renderers, PPTX in core) will live under new modules here—not duplicate empty stubs.
+```typescript
+import { parseQuizFromYaml } from '@silverio-labs/qmark-core';
+
+const ast = parseQuizFromYaml(yamlString);
+```
+
+Free tier includes YAML parsing, directory merge, and static HTML slides (`renderHtmlSlideDeck`). Editable PPTX, animations, branded themes, hosted timers, and collaboration require a QMark Pro subscription.
+
+Authoring rules and examples: [github.com/silveriolabs/qmark](https://github.com/silveriolabs/qmark).
