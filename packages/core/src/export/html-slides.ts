@@ -1,4 +1,5 @@
 import type { QuestionAst, QuizAst, SectionAst } from '../ast/types';
+import { formatAnswerLines } from './format-answer';
 
 function escapeHtml(text: string): string {
   return text
@@ -29,11 +30,20 @@ function questionSlide(section: SectionAst, question: QuestionAst): string {
     body = `<ul>${question.options.map((o) => `<li>${escapeHtml(o)}</li>`).join('')}</ul>`;
   }
 
+  const answerBody = formatAnswerLines(question)
+    .map((line) => `<li>${escapeHtml(line)}</li>`)
+    .join('');
+
   return `<section class="slide" data-question-id="${escapeHtml(question.id)}">
   <p class="kicker">${title}</p>
   <h2>${stem}</h2>
   <p class="meta">${escapeHtml(meta)}</p>
   ${body}
+</section>
+<section class="slide slide-answer" data-question-id="${escapeHtml(question.id)}-answer">
+  <p class="kicker">Answer</p>
+  <h2>${stem}</h2>
+  <ul>${answerBody}</ul>
 </section>`;
 }
 

@@ -20,6 +20,7 @@ export type { ComposeIssue } from './errors';
 export { parseComposeYaml } from './parse/parse-yaml';
 export { parseQuizFromYaml } from './parse/quiz-from-yaml';
 
+export { formatAnswerLines } from './export/format-answer';
 export { renderHtmlSlideDeck } from './export/html-slides';
 
 export {
