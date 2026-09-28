@@ -1,6 +1,6 @@
 {
   "name": "@silverio-labs/qmark-cli",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Compile qmark-compose.yml or *.qmc.yml directories to PDF and web bundles",
   "author": "Silverio Labs <https://silverio-labs.com>",
   "license": "SEE LICENSE IN LICENSE",
