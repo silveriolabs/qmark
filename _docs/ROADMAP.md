@@ -13,7 +13,13 @@ Package the core rendering engine into a single npm library. Pushing updates her
 
 ## Rules
 
-How to write `qmark-compose.yaml`. Full example: `_docs/qmark-compose.yaml`.
+How to write `qmark-compose.yml`. Full example: `_docs/qmark-compose.yml`.
+
+### Project layout
+
+- **Single quiz:** one `qmark-compose.yml` (`.yaml` also accepted).
+- **Multi-part quiz:** additional `<name>.qmc.yml` files in the same folder (e.g. `math.qmc.yml`).
+- **Compiler / CLI:** pass the **directory**; the engine loads `qmark-compose.yml` and every `*.qmc.yml`, then merges into one AST.
 
 ### Document
 

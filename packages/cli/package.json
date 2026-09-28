@@ -1,0 +1,29 @@
+{
+  "name": "@silverio-labs/qmark-cli",
+  "version": "0.1.0",
+  "description": "Compile qmark-compose.yml directories to PDF and web bundles",
+  "author": "Silverio Labs <https://silverio-labs.com>",
+  "license": "MIT",
+  "bin": {
+    "qmark": "./dist/bin.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx src/smoke.test.ts"
+  },
+  "dependencies": {
+    "@silverio-labs/qmark-core": "workspace:*",
+    "pdfkit": "^0.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/pdfkit": "^0.13.5",
+    "tsup": "^8.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.0.0"
+  }
+}

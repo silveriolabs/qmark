@@ -67,10 +67,12 @@ Thumbs.db
 logs/
 *.tmp
 *.temp
+_tmp_*
 .cache/
 .turbo/
+qmark-out/
 
 # ==========================================
 # Others
 # ==========================================
-*.yml
+# Keep qmark-compose.yml / *.qmc.yml tracked (authoring source files).
