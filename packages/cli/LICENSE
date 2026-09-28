@@ -1,0 +1,33 @@
+Silverio Labs QMark License
+
+Copyright (c) 2026 Silverio Labs
+
+This license applies to the QMark software and documentation in this repository (the "Software"), except where a file states otherwise.
+
+1. Free use
+
+Subject to this license, Silverio Labs grants you a free, non-exclusive, non-transferable license to use, run, and internally deploy the Free-tier portions of the Software for personal, academic, and commercial purposes, including compiling local quizzes and embedding the published Free-tier APIs in your applications.
+
+2. No modification
+
+You may not modify, adapt, translate, reverse engineer for the purpose of creating a derivative, or create derivative works of the Software. You may not remove or alter copyright, license, or attribution notices.
+
+You may copy and redistribute the Software only in unmodified form, and only together with this license and the copyright notice.
+
+3. Pro and Enterprise features
+
+Features designated as Pro, Enterprise, or otherwise paid (including, without limitation, editable PPTX export, animations, custom themes, hosted timers, collaboration, cloud uploads, and confidentiality or compliance offerings) are not granted by this free license.
+
+Use of those features requires a paid license or subscription from Silverio Labs (https://silverio-labs.com). Using, enabling, or circumventing paid features without that license is not permitted.
+
+4. Trademarks
+
+This license does not grant any right to use Silverio Labs or QMark names, logos, or trademarks, except for truthful attribution.
+
+5. Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+6. Termination
+
+This license ends automatically if you breach it. Sections 4 and 5 survive termination.
