@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Compile qmark-compose.yml directories to PDF and web bundles",
   "author": "Silverio Labs <https://silverio-labs.com>",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "bin": {
     "qmark": "./dist/bin.js"
   },

@@ -1,110 +1,161 @@
 # QMark Suite
 
 [![npm version](https://img.shields.io/npm/v/@silverio-labs/qmark-core.svg)](https://www.npmjs.com/package/@silverio-labs/qmark-core)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Free%20use%2C%20no%20modification-blue.svg)](LICENSE)
 
-**QMark** parses declarative YAML questionnaires into formats for **web-based interactive quizzes** and **presentation slide decks** (PPTX / HTML slides).
+**QMark** parses declarative YAML questionnaires into **web-based interactive quizzes** and **presentation slide decks** (HTML slides / PDF today; PPTX on Pro).
 
-Built for **academe** and **enterprise L&D**: instructors and training managers author assessments in compose YAML; `@silverio-labs/qmark-core` validates syntax and produces a normalized AST for custom React/Next.js UIs or export pipelines. `@silverio-labs/qmark-cli` compiles local project folders from the terminal.
+Built for **academe** and **enterprise L&D**: authors write compose YAML once; `@silverio-labs/qmark-core` validates and normalizes to an AST; `@silverio-labs/qmark-cli` exports from local folders.
 
 ```text
-qmark-compose.yml (+ optional *.qmc.yml)  →  parse & validate  →  AST  →  web quiz  |  HTML/PDF slides  |  PPTX (Pro)
+qmark-compose.yml (+ optional *.qmc.yml)
+        →  parse & validate  →  QuizAst
+        →  web quiz (your React/Next.js UI)  |  --html / --pdf (CLI)  |  --pptx (Pro)
 ```
 
 **Supported item types:** `multiple-choice`, `multiple-select`, `boolean`, `fill-blank`, `short-answer`, `matching`, `ordering`. Photos and media URLs are optional.
 
-**Authoring spec:** [`_docs/ROADMAP.md`](_docs/ROADMAP.md) · **Example:** [`_docs/qmark-compose.yml`](_docs/qmark-compose.yml)
+**Authoring:** [`_docs/ROADMAP.md`](_docs/ROADMAP.md) · **Example compose:** [`_docs/qmark-compose.yml`](_docs/qmark-compose.yml) · **Science module:** [`_docs/1-science-quiz.qmc.yml`](_docs/1-science-quiz.qmc.yml)
 
-### Compose files
+---
+
+## Compose files & directory compiler
 
 | Input | Convention |
 |--------|------------|
 | Single quiz | `qmark-compose.yml` (or `.yaml`) |
-| Multi-part quiz | `<name>.qmc.yml` (e.g. `math.qmc.yml`, `science.qmc.yml`) |
-| Compiler / CLI path | **Directory** — loads `qmark-compose.yml` and every `*.qmc.yml` in that folder, merges into one AST |
+| Extra parts | `<name>.qmc.yml` (e.g. `1-science-quiz.qmc.yml`) |
+| CLI / compiler path | Pass a **directory** (or a single file) |
+
+When you pass a **directory**, the engine:
+
+1. Loads **`qmark-compose.yml`** if present (at most one).
+2. Loads every **`*.qmc.yml`** / `*.qmc.yaml` in that folder, sorted by filename.
+3. **Merges** into one AST: compose sections first, then modules; quiz names combine when they differ.
+
+| Folder contents | Merged result |
+|-----------------|---------------|
+| Only `qmark-compose.yml` | That quiz |
+| Only `*.qmc.yml` | Modules merged (sorted) |
+| Compose + modules | Compose, then modules |
+
+Each file must be a full document: `version`, `name`, and `sections` (see ROADMAP).
 
 ---
 
-## Purpose & Scope
+## CLI (`qmark compile`)
 
-This monorepo houses the **parser**, **AST pipeline**, **web rendering drivers**, and **slide/export** layers (`packages/core`), plus the open-source **CLI** (`packages/cli`) and future app shells. One compose source drives interactive web quizzes and presentation outputs.
+Build the CLI from the monorepo, then run `qmark` (or `node packages/cli/dist/bin.js`):
 
----
-
-## Tier architecture
-
-| Capability | Free (open source / local) | Paid (Pro / Enterprise) |
-|------------|------------------------------|-------------------------|
-| **Core** — YAML → AST (`parseQuizFromYaml` / `compileComposeYaml`) | ✓ | ✓ |
-| **CLI** — `qmark compile <dir> --pdf` | ✓ | ✓ |
-| **Export** — PDF, HTML slides, SVG/PNG (static) | ✓ | ✓ |
-| **CLI / export** — editable `.pptx` | — | ✓ |
-| **UI** — animations, branded themes, hosted timers | Default layout only | ✓ |
-| **Platform** — cloud workspace, co-authoring, uploads | Local YAML only | ✓ |
-| **Enterprise** — confidential hosting, compliance | — | ✓ |
-
-Developers stay on the free loop (VS Code + CLI PDF + AST in Next.js). Corporate L&D upsells target PPTX, polish, collaboration, and security.
-
----
-
-## 10-step technical roadmap
-
-### Phase 1: Core engine & multi-format parsing (`packages/`)
-
-1. **Zero-dependency architecture** — TypeScript, `pnpm`, `tsup` workspace.
-2. **Schema & validation** — YAML parse + Zod runtime validation.
-3. **AST transformation** — Normalized trees for web and slide layouts.
-4. **Web quiz engine** — Client-side DOM / SVG / Canvas drivers.
-5. **Slide engine** — HTML slide decks and PPTX compilation.
-6. **Direct export** — Client-side PDF, HTML, PNG (PPTX gated on Pro).
-
-### Phase 2: UI & CLI (`apps/`, `packages/cli`)
-
-7. **CLI** (`@silverio-labs/qmark-cli`) — Local compile, web bundles, automated exports.
-8. **Web playground** — Next.js live preview (quiz + slides).
-9. **VS Code extension** — In-editor quiz and slide preview.
-
-### Phase 3: Enterprise integration
-
-10. **Headless APIs** — LMS (SCORM / xAPI), B2B suites, cloud wrappers.
-
----
-
-## Workspace
-
-```text
-qmark-suite/
-├── _docs/
-│   ├── ROADMAP.md              # Authoring rules
-│   └── qmark-compose.yml       # Example questionnaire
-├── packages/
-│   ├── core/                   # @silverio-labs/qmark-core
-│   └── cli/                    # @silverio-labs/qmark-cli
-├── apps/
-│   ├── web/                    # Playground & live previewer
-│   └── vscode/                 # Editor extension
-├── package.json
-└── pnpm-workspace.yaml
+```bash
+pnpm install
+pnpm build
+qmark compile <file-or-directory> [options]
 ```
 
-### Quick start (AST in React / Next.js)
+### Flags
+
+| Flag | Tier | Description |
+|------|------|-------------|
+| `--pdf` | Free | Export a PDF slide-style deck from the merged AST |
+| `--html` | Free | Export a static full-screen HTML slide deck |
+| `-o`, `--output` | — | Output file path (default: `./qmark-out/<quiz-name>.pdf` or `.html`) |
+| `--pptx` | Pro | Editable PowerPoint (gated; pipeline coming soon) |
+| `--tier` | — | `free` (default), `pro`, or `enterprise` — controls feature gates |
+| `-h`, `--help` | — | Show usage |
+
+You must pass at least one export flag: `--pdf`, `--html`, or `--pptx`.
+
+### Examples
+
+```bash
+# Directory: compose + modules → one PDF
+qmark compile ./sample --pdf
+
+# Example compose in _docs
+qmark compile ./_docs --pdf -o ./out/quiz.pdf
+
+# HTML slideshow (browser or print to PDF)
+qmark compile ./_docs --html
+
+# Single science module
+qmark compile ./_docs/1-science-quiz.qmc.yml --pdf
+```
+
+Default CLI output directory: `./qmark-out/` (gitignored).
+
+---
+
+## Core (`@silverio-labs/qmark-core`)
+
+Use in **Next.js / React** when you want your own full-screen quiz or slideshow UI (free tier).
+
+| API | Purpose |
+|-----|---------|
+| `parseQuizFromYaml(yaml)` | Raw compose string → validated **QuizAst** |
+| `compileComposeYaml` / `compileComposeDirectory` | Same as CLI merge rules; directory API takes `{ path, content }[]` (no Node `fs` required) |
+| `compile({ kind: 'yaml' \| 'file' \| 'directory', ... })` | Unified compiler entry |
+| `renderHtmlSlideDeck(ast)` | Static HTML slides from AST |
+| `requireFeature(tier, feature)` | Free vs Pro gates (`PaidFeatureError` on paid-only features) |
 
 ```typescript
 import { parseQuizFromYaml } from '@silverio-labs/qmark-core';
 
 const ast = parseQuizFromYaml(yamlString);
-// Build a full-screen slideshow or interactive quiz from ast.sections
+// ast.sections → your interactive quiz or custom slideshow
 ```
 
-### Quick start (CLI PDF)
+For a folder on disk in app code, read files yourself and call `compileComposeDirectory(files)`.
+
+---
+
+## Tier architecture
+
+| Capability | Free (local use) | Paid (Pro / Enterprise) |
+|------------|------------------------------|-------------------------|
+| YAML → AST, custom web UI | ✓ | ✓ |
+| CLI `--pdf`, `--html` | ✓ | ✓ |
+| Static SVG/PNG/HTML export (core) | ✓ | ✓ |
+| CLI `--pptx` | — | ✓ (when shipped) |
+| Animations, branded themes, hosted timers | Default layout | ✓ |
+| Cloud workspace, co-authoring, uploads | Local YAML | ✓ |
+| Confidential hosting, compliance | — | ✓ |
+
+---
+
+## Development
 
 ```bash
-pnpm --filter @silverio-labs/qmark-cli build
-qmark compile ./my-quiz --pdf -o ./out/quiz.pdf
+pnpm install
+pnpm typecheck
+pnpm test      # core compile tests + CLI smoke test
+pnpm build     # packages/core + packages/cli → dist/
+```
+
+---
+
+## Roadmap (summary)
+
+**Phase 1 — `packages/`:** schema, AST, web render drivers, HTML/PDF export, PPTX (Pro).  
+**Phase 2 — CLI & apps:** playground (`apps/web`), VS Code preview (`apps/vscode`).  
+**Phase 3:** headless LMS / SCORM / xAPI integrations.
+
+See workspace layout:
+
+```text
+qmark/
+├── _docs/              # ROADMAP, qmark-compose.yml, 1-science-quiz.qmc.yml
+├── sample/             # Optional *.qmc.yml modules for directory demos
+├── packages/
+│   ├── core/           # @silverio-labs/qmark-core
+│   └── cli/            # @silverio-labs/qmark-cli
+├── apps/               # web playground, vscode (planned)
+├── package.json
+└── pnpm-workspace.yaml
 ```
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Free to **use and redistribute unmodified**. **Modification and derivative works are not allowed.** Pro and Enterprise features require a paid license or subscription from Silverio Labs. See [LICENSE](LICENSE).
