@@ -12,7 +12,8 @@
   ],
   "scripts": {
     "build": "tsup",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx src/smoke.test.ts"
   },
   "dependencies": {
     "@silverio-labs/qmark-core": "workspace:*",
@@ -22,6 +23,7 @@
     "@types/node": "^20.0.0",
     "@types/pdfkit": "^0.13.5",
     "tsup": "^8.0.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.0.0"
   }
 }

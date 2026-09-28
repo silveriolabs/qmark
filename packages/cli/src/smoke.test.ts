@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { compileComposeDirectory } from '@silverio-labs/qmark-core';
+import { loadCompileInput } from './load-input';
+
+const repoRoot = resolve(fileURLToPath(new URL('.', import.meta.url)), '../../..');
+const docsDir = resolve(repoRoot, '_docs');
+
+const files = loadCompileInput(docsDir);
+assert.ok(files.length >= 1);
+
+const ast = compileComposeDirectory(files);
+assert.equal(ast.name, 'Quiz 1');
+assert.ok(ast.sections.length >= 1);
+
+console.log('cli smoke tests passed');

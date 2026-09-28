@@ -9,7 +9,7 @@
   "packageManager": "pnpm@12.4.1",
   "scripts": {
     "build": "pnpm --recursive --filter \"./packages/**\" build",
-    "test": "pnpm --recursive test",
+    "test": "pnpm --recursive --if-present test",
     "typecheck": "pnpm --recursive typecheck"
   }
 }

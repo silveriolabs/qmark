@@ -67,8 +67,10 @@ Thumbs.db
 logs/
 *.tmp
 *.temp
+_tmp_*
 .cache/
 .turbo/
+qmark-out/
 
 # ==========================================
 # Others
