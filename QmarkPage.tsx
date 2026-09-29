@@ -24,8 +24,12 @@ const DISCIPLINES = [
     text: 'Embed schematics, blueprints, or circuit diagrams via image linking and pair them with short-answer numeric items. Compile to HTML slides with crisp SVG-friendly output for problem sets.',
   },
   {
-    title: 'Music theorists, artists & educators',
-    text: 'Link score snippets or waveform visuals alongside matching and ordering formats to test ear training, chord progressions, or structural analysis—whether you teach theory, perform, or study as an artist.',
+    title: 'Music theorists & educators',
+    text: 'Link score snippets or waveform visuals alongside matching and ordering formats to test ear training, chord progressions, or structural analysis.',
+  },
+  {
+    title: 'Graphic artists & design students',
+    text: 'Link mockups, typography samples, or layout screenshots and use matching or multiple-choice items for terminology, color theory, and tool workflows—great for portfolio courses and studio critiques.',
   },
   {
     title: 'Mathematicians & statisticians',
