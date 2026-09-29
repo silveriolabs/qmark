@@ -10,7 +10,9 @@ import {
 import { writeQuizPdf } from './export-pdf';
 import { loadCompileInput } from './load-input';
 
-const require = createRequire(import.meta.url);
+declare const __filename: string;
+
+const require = createRequire(__filename);
 const { version } = require('../package.json') as { version: string };
 
 const USAGE = `qmark compile <file-or-directory> [options]
