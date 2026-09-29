@@ -57,6 +57,15 @@ export function renderHtmlSlideDeck(ast: QuizAst): string {
 
   const title = escapeHtml(ast.name);
 
+  const keyItems = ast.sections
+    .flatMap((section) => section.questions)
+    .map((q) => `<li>${escapeHtml(formatAnswerLines(q).join(' · '))}</li>`)
+    .join('');
+  const answerKey = `<details class="answer-key">
+  <summary>Answer key</summary>
+  <ol>${keyItems}</ol>
+</details>`;
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,11 +85,26 @@ export function renderHtmlSlideDeck(ast: QuizAst): string {
     h2 { font-size: clamp(1.5rem, 4vw, 2.75rem); line-height: 1.2; margin: 0 0 1rem; max-width: 40ch; }
     .meta { color: #64748b; font-size: 0.9rem; }
     ul { font-size: 1.25rem; line-height: 1.6; }
+    .answer-key { padding: 2rem clamp(1.5rem, 5vw, 4rem); }
+    .answer-key summary {
+      cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 0.5rem;
+      text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; color: #94a3b8;
+    }
+    .answer-key summary::-webkit-details-marker { display: none; }
+    .answer-key summary::before {
+      content: ''; width: 0.5em; height: 0.5em;
+      border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+      transform: rotate(-45deg); transition: transform 0.15s ease;
+    }
+    .answer-key[open] summary::before { transform: rotate(45deg); }
+    .answer-key ol { columns: 3 16rem; column-gap: 2rem; font-size: 1rem; line-height: 1.6; }
+    .answer-key li { break-inside: avoid; }
     @media print { .slide { page-break-after: always; min-height: auto; } }
   </style>
 </head>
 <body>
 ${slides.join('\n')}
+${answerKey}
 </body>
 </html>`;
 }
