@@ -3,9 +3,11 @@
 [![npm version](https://img.shields.io/npm/v/@silverio-labs/qmark-core.svg)](https://www.npmjs.com/package/@silverio-labs/qmark-core)
 [![License](https://img.shields.io/badge/License-Free%20use%2C%20no%20modification-blue.svg)](LICENSE)
 
-**QMark** parses declarative YAML questionnaires into **web-based interactive quizzes** and **presentation slide decks** (HTML slides / PDF today; PPTX on Pro).
+**QMark** turns one quiz file into a **web quiz** or a **slide deck**. Write **`qmark-compose.yml`** for a single quiz, or **`*.qmc.yml`** files (for example `1-science-quiz.qmc.yml`) when a folder holds several parts. The compiler accepts either a file or a directory.
 
-Built for **academe** and **enterprise L&D**: authors write compose YAML once; `@silverio-labs/qmark-core` validates and normalizes to an AST; `@silverio-labs/qmark-cli` exports from local folders.
+Product site: [silverio-labs.com/qmark](https://silverio-labs.com/qmark)
+
+Built for **academe** and **enterprise L&D**: authors write those YAML files once; `@silverio-labs/qmark-core` validates and normalizes them to an AST; `@silverio-labs/qmark-cli` exports PDF and HTML from the terminal.
 
 ```text
 qmark-compose.yml (+ optional *.qmc.yml)
@@ -158,4 +160,4 @@ qmark/
 
 ## License
 
-Free to **use and redistribute unmodified**. **Modification and derivative works are not allowed.** Pro and Enterprise features require a paid license or subscription from Silverio Labs. See [LICENSE](LICENSE).
+Free to **use and redistribute unmodified**. **Modification and derivative works are not allowed.** Pro and Enterprise features require a paid license or subscription from [silverio-labs.com/qmark](https://silverio-labs.com/qmark). See [LICENSE](LICENSE).
