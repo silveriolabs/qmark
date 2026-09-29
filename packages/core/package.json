@@ -1,6 +1,6 @@
 {
   "name": "@silverio-labs/qmark-core",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Client-side YAML-to-Canvas/SVG assessment rendering engine",
   "author": "Silverio Labs <https://silverio-labs.com>",
   "license": "SEE LICENSE IN LICENSE",
