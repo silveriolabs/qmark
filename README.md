@@ -1,163 +1,98 @@
-# QMark Suite
+# QMark
 
 [![npm version](https://img.shields.io/npm/v/@silverio-labs/qmark-core.svg)](https://www.npmjs.com/package/@silverio-labs/qmark-core)
 [![License](https://img.shields.io/badge/License-Free%20use%2C%20no%20modification-blue.svg)](LICENSE)
 
-**QMark** turns one quiz file into a **web quiz** or a **slide deck**. Write **`qmark-compose.yml`** for a single quiz, or **`*.qmc.yml`** files (for example `1-science-quiz.qmc.yml`) when a folder holds several parts. The compiler accepts either a file or a directory.
+QMark turns a quiz you write in a text file into a printable slide deck or a web quiz you can run in the browser. If you are in **academe**, you can use it for **self-study**: turn your notes, textbook chapters, and slides into practice that feels like review—not busywork.
 
-Product site: [silverio-labs.com/qmark](https://silverio-labs.com/qmark)
+Start here: [silverio-labs.com/qmark](https://silverio-labs.com/qmark)
 
-Built for **academe** and **enterprise L&D**: authors write those YAML files once; `@silverio-labs/qmark-core` validates and normalizes them to an AST; `@silverio-labs/qmark-cli` exports PDF and HTML from the terminal.
+## Who is QMark for?
+
+**You, if you are learning in academe.** Whether you are in **K–12**, **undergraduate**, or **graduate** school, QMark helps you build chapter quizzes, exam prep, and lab follow-ups you can reuse all term. Write once in `qmark-compose.yml` or split work across `*.qmc.yml` files, then export PDF or HTML to study on your laptop or phone.
+
+Teachers and faculty use the same files for class reviews. Training teams use them for onboarding and refreshers. The format is the same; the benefit for you is **active recall** on your own schedule, with optional images linked to each question when your course is visual (diagrams, excerpts, scores, code).
+
+## How to name your quiz files
+
+Use one of these names. QMark looks for them and ignores other files in the folder.
+
+| You are writing | File name |
+|-----------------|-----------|
+| One quiz | `qmark-compose.yml` |
+| One part of a larger quiz | `something.qmc.yml`, for example `1-science-quiz.qmc.yml` |
+
+You can keep a main file and extra parts in the same folder. QMark reads `qmark-compose.yml` first, then every `*.qmc.yml` file in alphabetical order, and builds one quiz.
+
+Worked examples in this repo: [`_docs/qmark-compose.yml`](_docs/qmark-compose.yml) and [`_docs/1-science-quiz.qmc.yml`](_docs/1-science-quiz.qmc.yml). Writing rules: [`_docs/ROADMAP.md`](_docs/ROADMAP.md).
+
+Each file needs a title (`name`), a version, and at least one section of questions. Question types you can use: multiple choice, select-all-that-apply, true/false, fill in the blank, short answer, matching, and put-in-order. Photos are optional.
+
+## Make a PDF or a slideshow
+
+Install the command-line tool, then point it at a file or a folder:
+
+```bash
+npm install -g @silverio-labs/qmark-cli@latest
+qmark compile ./qmark-compose.yml --pdf
+qmark compile ./1-science-quiz.qmc.yml --html
+qmark compile ./my-quiz-folder --pdf
+```
+
+PDF and HTML are free. The file lands in a `qmark-out` folder next to where you ran the command. Editable PowerPoint and other Pro features are on [silverio-labs.com/qmark](https://silverio-labs.com/qmark).
+
+| What you can do | Free | Pro |
+|-----------------|------|-----|
+| Write quizzes locally and export PDF or HTML | Yes | Yes |
+| Build your own web quiz from the parsed quiz | Yes | Yes |
+| Editable PowerPoint, animations, branded themes, timers | | Yes |
+| Shared cloud editing, uploads, private hosting | | Yes |
+
+## For developers
+
+`@silverio-labs/qmark-core` checks the YAML and returns a quiz object (`QuizAst`). `@silverio-labs/qmark-cli` reads a file or directory from disk and writes PDF or HTML.
 
 ```text
-qmark-compose.yml (+ optional *.qmc.yml)
-        →  parse & validate  →  QuizAst
-        →  web quiz (your React/Next.js UI)  |  --html / --pdf (CLI)  |  --pptx (Pro)
+qmark-compose.yml and optional *.qmc.yml
+  → validate → QuizAst → web UI | --pdf | --html | --pptx (Pro)
 ```
-
-**Supported item types:** `multiple-choice`, `multiple-select`, `boolean`, `fill-blank`, `short-answer`, `matching`, `ordering`. Photos and media URLs are optional.
-
-**Authoring:** [`_docs/ROADMAP.md`](_docs/ROADMAP.md) · **Example compose:** [`_docs/qmark-compose.yml`](_docs/qmark-compose.yml) · **Science module:** [`_docs/1-science-quiz.qmc.yml`](_docs/1-science-quiz.qmc.yml)
-
----
-
-## Compose files & directory compiler
-
-| Input | Convention |
-|--------|------------|
-| Single quiz | `qmark-compose.yml` (or `.yaml`) |
-| Extra parts | `<name>.qmc.yml` (e.g. `1-science-quiz.qmc.yml`) |
-| CLI / compiler path | Pass a **directory** (or a single file) |
-
-When you pass a **directory**, the engine:
-
-1. Loads **`qmark-compose.yml`** if present (at most one).
-2. Loads every **`*.qmc.yml`** / `*.qmc.yaml` in that folder, sorted by filename.
-3. **Merges** into one AST: compose sections first, then modules; quiz names combine when they differ.
-
-| Folder contents | Merged result |
-|-----------------|---------------|
-| Only `qmark-compose.yml` | That quiz |
-| Only `*.qmc.yml` | Modules merged (sorted) |
-| Compose + modules | Compose, then modules |
-
-Each file must be a full document: `version`, `name`, and `sections` (see ROADMAP).
-
----
-
-## CLI (`qmark compile`)
-
-Build the CLI from the monorepo, then run `qmark` (or `node packages/cli/dist/bin.js`):
 
 ```bash
-pnpm install
-pnpm build
-qmark compile <file-or-directory> [options]
+npm install @silverio-labs/qmark-core@latest
 ```
-
-### Flags
-
-| Flag | Tier | Description |
-|------|------|-------------|
-| `--pdf` | Free | Export a PDF slide-style deck from the merged AST |
-| `--html` | Free | Export a static full-screen HTML slide deck |
-| `-o`, `--output` | — | Output file path (default: `./qmark-out/<quiz-name>.pdf` or `.html`) |
-| `--pptx` | Pro | Editable PowerPoint (gated; pipeline coming soon) |
-| `--tier` | — | `free` (default), `pro`, or `enterprise` — controls feature gates |
-| `-h`, `--help` | — | Show usage |
-
-You must pass at least one export flag: `--pdf`, `--html`, or `--pptx`.
-
-### Examples
-
-```bash
-# Directory: compose + modules → one PDF
-qmark compile ./sample --pdf
-
-# Example compose in _docs
-qmark compile ./_docs --pdf -o ./out/quiz.pdf
-
-# HTML slideshow (browser or print to PDF)
-qmark compile ./_docs --html
-
-# Single science module
-qmark compile ./_docs/1-science-quiz.qmc.yml --pdf
-```
-
-Default CLI output directory: `./qmark-out/` (gitignored).
-
----
-
-## Core (`@silverio-labs/qmark-core`)
-
-Use in **Next.js / React** when you want your own full-screen quiz or slideshow UI (free tier).
-
-| API | Purpose |
-|-----|---------|
-| `parseQuizFromYaml(yaml)` | Raw compose string → validated **QuizAst** |
-| `compileComposeYaml` / `compileComposeDirectory` | Same as CLI merge rules; directory API takes `{ path, content }[]` (no Node `fs` required) |
-| `compile({ kind: 'yaml' \| 'file' \| 'directory', ... })` | Unified compiler entry |
-| `renderHtmlSlideDeck(ast)` | Static HTML slides from AST |
-| `requireFeature(tier, feature)` | Free vs Pro gates (`PaidFeatureError` on paid-only features) |
 
 ```typescript
-import { parseQuizFromYaml } from '@silverio-labs/qmark-core';
+import { parseQuizFromYaml, compileComposeDirectory } from '@silverio-labs/qmark-core';
 
 const ast = parseQuizFromYaml(yamlString);
-// ast.sections → your interactive quiz or custom slideshow
 ```
 
-For a folder on disk in app code, read files yourself and call `compileComposeDirectory(files)`.
+| API | Use |
+|-----|-----|
+| `parseQuizFromYaml(yaml)` | One YAML string → `QuizAst` |
+| `compileComposeDirectory(files)` | `{ path, content }[]` using the same merge rules as the CLI |
+| `renderHtmlSlideDeck(ast)` | Static HTML slides |
+| `requireFeature(tier, feature)` | Throws when a Pro feature is used on the free tier |
 
----
+CLI flags: `--pdf`, `--html`, `-o` / `--output`, `--pptx` (Pro), `--tier free|pro|enterprise`, `-h`.
 
-## Tier architecture
-
-| Capability | Free (local use) | Paid (Pro / Enterprise) |
-|------------|------------------------------|-------------------------|
-| YAML → AST, custom web UI | ✓ | ✓ |
-| CLI `--pdf`, `--html` | ✓ | ✓ |
-| Static SVG/PNG/HTML export (core) | ✓ | ✓ |
-| CLI `--pptx` | — | ✓ (when shipped) |
-| Animations, branded themes, hosted timers | Default layout | ✓ |
-| Cloud workspace, co-authoring, uploads | Local YAML | ✓ |
-| Confidential hosting, compliance | — | ✓ |
-
----
-
-## Development
+From this repo:
 
 ```bash
 pnpm install
 pnpm typecheck
-pnpm test      # core compile tests + CLI smoke test
-pnpm build     # packages/core + packages/cli → dist/
+pnpm test
+pnpm build
 ```
-
----
-
-## Roadmap (summary)
-
-**Phase 1 — `packages/`:** schema, AST, web render drivers, HTML/PDF export, PPTX (Pro).  
-**Phase 2 — CLI & apps:** playground (`apps/web`), VS Code preview (`apps/vscode`).  
-**Phase 3:** headless LMS / SCORM / xAPI integrations.
-
-See workspace layout:
 
 ```text
 qmark/
-├── _docs/              # ROADMAP, qmark-compose.yml, 1-science-quiz.qmc.yml
-├── sample/             # Optional *.qmc.yml modules for directory demos
-├── packages/
-│   ├── core/           # @silverio-labs/qmark-core
-│   └── cli/            # @silverio-labs/qmark-cli
-├── apps/               # web playground, vscode (planned)
-├── package.json
-└── pnpm-workspace.yaml
+├── _docs/          # writing rules and example quizzes
+├── packages/core/  # @silverio-labs/qmark-core
+├── packages/cli/   # @silverio-labs/qmark-cli
+└── apps/           # playground and editor preview (planned)
 ```
-
----
 
 ## License
 
-Free to **use and redistribute unmodified**. **Modification and derivative works are not allowed.** Pro and Enterprise features require a paid license or subscription from [silverio-labs.com/qmark](https://silverio-labs.com/qmark). See [LICENSE](LICENSE).
+You may use and share QMark as provided. You may not modify it or build derivative works. Pro features need a subscription from [silverio-labs.com/qmark](https://silverio-labs.com/qmark). See [LICENSE](LICENSE).
