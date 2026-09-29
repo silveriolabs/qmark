@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module';
 import { mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import {
@@ -9,6 +10,9 @@ import {
 import { writeQuizPdf } from './export-pdf';
 import { loadCompileInput } from './load-input';
 
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json') as { version: string };
+
 const USAGE = `qmark compile <file-or-directory> [options]
 
 Options:
@@ -17,6 +21,7 @@ Options:
   -o, --output    Output file path (default: ./qmark-out/quiz.pdf or .html)
   --pptx          Export editable PPTX (Pro / Enterprise)
   --tier          License tier: free | pro | enterprise (default: free)
+  -v, --version   Print version
   -h, --help      Show help
 `;
 
@@ -32,6 +37,9 @@ function parseArgs(argv: string[]) {
     const arg = argv[i]!;
     if (arg === '-h' || arg === '--help') {
       return { help: true as const };
+    }
+    if (arg === '-v' || arg === '--version') {
+      return { version: true as const };
     }
     if (arg === '--pdf') {
       pdf = true;
@@ -120,6 +128,11 @@ function slugify(name: string): string {
 async function main() {
   const [, , command, ...rest] = process.argv;
 
+  if (command === '-v' || command === '--version') {
+    console.log(version);
+    process.exit(0);
+  }
+
   if (!command || command === '-h' || command === '--help') {
     console.log(USAGE);
     process.exit(0);
@@ -132,6 +145,10 @@ async function main() {
 
   try {
     const args = parseArgs(rest);
+    if ('version' in args) {
+      console.log(version);
+      process.exit(0);
+    }
     if (args.help) {
       console.log(USAGE);
       process.exit(0);
