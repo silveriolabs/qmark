@@ -57,23 +57,56 @@ export async function writeQuizPdf(ast: QuizAst, outputPath: string): Promise<vo
       doc.fillColor('#000');
     };
 
-    startKeyPage();
-    doc.fontSize(28).text(ast.name, 48, 56, {
-      width: doc.page.width - 96,
-    });
-    doc.moveDown(0.4).fontSize(22).text('Answer key', {
-      width: doc.page.width - 96,
-    });
-    let cursorY = doc.y + 16;
+    const KEY_ITEMS_PER_PAGE = 30;
+    const keyFontSize = 10;
+    const keyGap = 4;
+    const keyWidth = () => doc.page.width - 96;
+    const keyBottom = () => doc.page.height - 48;
+
+    const startKeySheet = (continued: boolean) => {
+      startKeyPage();
+      doc.fontSize(16).text(ast.name, 48, 48, { width: keyWidth() });
+      doc
+        .moveDown(0.2)
+        .fontSize(12)
+        .text(continued ? 'Answer key (continued)' : 'Answer key', { width: keyWidth() });
+      return doc.y + 10;
+    };
+
+    const KEY_COLUMNS = 3;
+    const KEY_ROWS = KEY_ITEMS_PER_PAGE / KEY_COLUMNS;
+    const columnGap = 16;
+    const columnWidth = () => (keyWidth() - columnGap * (KEY_COLUMNS - 1)) / KEY_COLUMNS;
+    const columnX = (column: number) => 48 + column * (columnWidth() + columnGap);
+
+    let topY = startKeySheet(false);
+    let column = 0;
+    let rowsInColumn = 0;
+    let itemsOnPage = 0;
+    let cursorY = topY;
     keyed.forEach((question, index) => {
       const line = `${index + 1}. ${formatAnswerLines(question).join(' · ')}`;
-      if (cursorY > doc.page.height - 72) {
-        doc.restore();
-        startKeyPage();
-        cursorY = 56;
+      doc.fontSize(keyFontSize);
+      const height = doc.heightOfString(line, { width: columnWidth() });
+      const pageFull = itemsOnPage >= KEY_ITEMS_PER_PAGE;
+      if (!pageFull && (rowsInColumn >= KEY_ROWS || cursorY + height > keyBottom())) {
+        column += 1;
+        rowsInColumn = 0;
+        cursorY = topY;
       }
-      doc.fontSize(18).text(line, 48, cursorY, { width: doc.page.width - 96 });
-      cursorY = doc.y + 10;
+      if (pageFull || column >= KEY_COLUMNS) {
+        doc.restore();
+        topY = startKeySheet(true);
+        doc.fontSize(keyFontSize);
+        column = 0;
+        rowsInColumn = 0;
+        itemsOnPage = 0;
+        cursorY = topY;
+      }
+      doc.text(line, columnX(column), cursorY, { width: columnWidth() });
+      cursorY = doc.y + keyGap;
+      rowsInColumn += 1;
+      itemsOnPage += 1;
     });
     doc.restore();
 
