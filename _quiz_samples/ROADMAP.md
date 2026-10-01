@@ -13,13 +13,13 @@ Package the core rendering engine into a single npm library. Pushing updates her
 
 ## Rules
 
-How to write `qmark-compose.yml`. Full example: `_quiz_samples/qmark-compose.yml`. Short modules: `_quiz_samples/1-medical-quiz.qmc.yml`, `_quiz_samples/2-science-quiz.qmc.yml`.
+How to write quiz YAML. **Primary filename:** `<quiz-name>.qmc.yml` (one quiz or unit per file). Examples: `_quiz_samples/1-medical-quiz.qmc.yml`, `_quiz_samples/2-science-quiz.qmc.yml`. **Optional:** `_quiz_samples/qmark-compose.yml` (at most one per folder).
 
 ### Project layout
 
-- **Single quiz:** one `qmark-compose.yml` (`.yaml` also accepted).
-- **Multi-part quiz:** additional `<name>.qmc.yml` files in the same folder (e.g. `math.qmc.yml`).
-- **Compiler / CLI:** pass the **directory**; the engine loads `qmark-compose.yml` and every `*.qmc.yml`, then merges into one AST.
+- **Primary (recommended):** one or more `<quiz-name>.qmc.yml` files in a folder (e.g. `math.qmc.yml`, `1-medical-quiz.qmc.yml`). Modules-only folders are valid full quizzes.
+- **Optional root file:** at most one `qmark-compose.yml` (`.yaml` also accepted), merged before `.qmc.yml` files when both are present.
+- **Compiler / CLI:** pass a **file** (`*.qmc.yml` or `qmark-compose.yml`) or a **directory**; the engine loads optional `qmark-compose.yml` and every `*.qmc.yml`, then merges into one AST.
 
 ### Document
 

@@ -16,7 +16,7 @@
     "slide-generator"
   ],
   "author": "Silverio Labs <https://silverio-labs.com>",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "LicenseRef-QMark",
   "bin": {
     "qmark": "./dist/bin.js"
   },

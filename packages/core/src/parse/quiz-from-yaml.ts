@@ -5,7 +5,7 @@ import {
 } from '../compile/compile';
 
 /**
- * Free-tier entry for Next.js / React apps: raw `qmark-compose.yml` string → AST.
+ * Free-tier entry for Next.js / React apps: raw `<quiz-name>.qmc.yml` or `qmark-compose.yml` string → AST.
  */
 export function parseQuizFromYaml(
   yaml: string,

@@ -22,6 +22,9 @@ export { parseQuizFromYaml } from './parse/quiz-from-yaml';
 
 export { formatAnswerLines } from './export/format-answer';
 export { renderHtmlSlideDeck } from './export/html-slides';
+export type { RenderHtmlSlideDeckOptions } from './export/html-slides';
+
+export { WATERMARK, WATERMARK_TEXT, watermarkHtml } from './watermark/watermark';
 
 export {
   DEFAULT_PHOTO_ANCHOR,
@@ -33,6 +36,7 @@ export {
   isFeatureAvailable,
   PaidFeatureError,
   requireFeature,
+  shouldWatermarkExport,
   TIER_MATRIX,
 } from './tier/features';
 export type { QMarkFeature, QMarkTier } from './tier/features';

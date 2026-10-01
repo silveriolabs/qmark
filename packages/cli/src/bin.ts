@@ -26,7 +26,7 @@ const USAGE = `qmark compile <file-or-directory> [options]
 qmark lint <file-or-directory> [--format text|json]
 
 Lint:
-  Validates qmark-compose.yml / *.qmc.yml and prints file:line:col with a fix hint.
+  Validates *.qmc.yml and optional qmark-compose.yml; prints file:line:col with a fix hint.
   Exits 1 on errors, 0 when there are only warnings.
 
 Compile options:
@@ -91,7 +91,7 @@ function parseArgs(argv: string[]) {
 async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) {
   const target = args.positional[0];
   if (!target) {
-    throw new Error('Missing path to qmark-compose.yml or quiz directory');
+    throw new Error('Missing path to a .qmc.yml file, qmark-compose.yml, or quiz directory');
   }
 
   if (!args.pdf && !args.html && !args.pptx) {
@@ -111,7 +111,7 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
     requireFeature(args.tier, 'pdf-export');
     const out = args.output ?? join(outDir, `${slugify(ast.name)}.pdf`);
     mkdirSync(dirname(out), { recursive: true });
-    await writeQuizPdf(ast, out);
+    await writeQuizPdf(ast, out, { tier: args.tier });
     console.log(`Wrote ${out}`);
   }
 
@@ -119,15 +119,13 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
     requireFeature(args.tier, 'html-slides');
     const out = args.output && !args.pdf ? args.output : join(outDir, `${slugify(ast.name)}.html`);
     mkdirSync(dirname(out), { recursive: true });
-    writeFileSync(out, renderHtmlSlideDeck(ast), 'utf8');
+    writeFileSync(out, renderHtmlSlideDeck(ast, { tier: args.tier }), 'utf8');
     console.log(`Wrote ${out}`);
   }
 
   if (args.pptx) {
     requireFeature(args.tier, 'pptx-export');
-    throw new Error(
-      'PPTX export is available on QMark Pro. Set --tier pro with a valid license (coming soon).',
-    );
+    throw new Error('PPTX export requires QMark Pro and is not implemented yet.');
   }
 }
 
@@ -184,7 +182,7 @@ function runLint(argv: string[]) {
 
   const target = positional[0];
   if (!target) {
-    throw new Error('Missing path to qmark-compose.yml, *.qmc.yml, or quiz directory');
+    throw new Error('Missing path to a .qmc.yml file, qmark-compose.yml, or quiz directory');
   }
   loadAndLint(resolve(target), format, true);
 }

@@ -51,7 +51,7 @@ export function compileComposeFiles(files: ComposeFileInput[]): QuizAst {
 }
 
 /**
- * Compile a quiz directory: `qmark-compose.yml`, `*.qmc.yml`, or both (merged in order).
+ * Compile a quiz directory: `*.qmc.yml` modules and optional `qmark-compose.yml` (compose first, then modules).
  */
 export function compileComposeDirectory(files: ComposeFileInput[]): QuizAst {
   const resolved = resolveComposeDirectory(files);

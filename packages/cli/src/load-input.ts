@@ -26,7 +26,7 @@ export function loadCompileInput(targetPath: string): ComposeFileInput[] {
   if (stat.isFile()) {
     if (!isComposeFilename(targetPath)) {
       throw new Error(
-        `Unsupported file "${targetPath}". Use qmark-compose.yml or *.qmc.yml`,
+        `Unsupported file "${targetPath}". Use a .qmc.yml file or qmark-compose.yml`,
       );
     }
     return [readComposeFile(targetPath, join(targetPath, '..'))];
@@ -52,7 +52,7 @@ export function loadCompileInput(targetPath: string): ComposeFileInput[] {
 
   if (picked.length === 0) {
     throw new Error(
-      `No qmark-compose.yml or *.qmc.yml files found in ${targetPath}`,
+      `No .qmc.yml or qmark-compose.yml files found in ${targetPath}`,
     );
   }
 

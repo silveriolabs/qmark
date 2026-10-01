@@ -7,7 +7,9 @@ import {
   compileComposeYaml,
   parseQuizFromYaml,
   requireFeature,
+  renderHtmlSlideDeck,
   resolveComposeDirectory,
+  WATERMARK,
 } from '../index';
 
 const root = join(fileURLToPath(new URL('.', import.meta.url)), '../../../..');
@@ -79,5 +81,10 @@ try {
   paidBlocked = true;
 }
 assert.equal(paidBlocked, true);
+
+const freeHtml = renderHtmlSlideDeck(ast, { tier: 'free' });
+assert.ok(freeHtml.includes(WATERMARK.before));
+const proHtml = renderHtmlSlideDeck(ast, { tier: 'pro' });
+assert.ok(!proHtml.includes('class="watermark"'));
 
 console.log('compile tests passed');

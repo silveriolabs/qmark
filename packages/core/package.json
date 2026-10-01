@@ -16,7 +16,7 @@
     "svg"
   ],
   "author": "Silverio Labs <https://silverio-labs.com>",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "LicenseRef-QMark",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

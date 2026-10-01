@@ -55,6 +55,11 @@ export function requireFeature(tier: QMarkTier, feature: QMarkFeature): void {
   }
 }
 
+/** Free-tier exports include attribution; Pro and Enterprise omit it. */
+export function shouldWatermarkExport(tier: QMarkTier): boolean {
+  return tier === 'free';
+}
+
 export const TIER_MATRIX = {
   free: [...FREE_FEATURES],
   paid: [

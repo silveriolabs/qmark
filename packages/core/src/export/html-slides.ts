@@ -1,6 +1,13 @@
 import type { QuestionAst, QuizAst, SectionAst } from '../ast/types';
 import { DEFAULT_PHOTO_ANCHOR, resolvePhotoUrl } from '../photo/resolve-photo-url';
+import { shouldWatermarkExport, type QMarkTier } from '../tier/features';
+import { WATERMARK_CSS, watermarkHtml } from '../watermark/watermark';
 import { formatAnswerLines } from './format-answer';
+
+export interface RenderHtmlSlideDeckOptions {
+  /** Defaults to `free` (includes export attribution). Pro and Enterprise omit the watermark. */
+  tier?: QMarkTier;
+}
 
 /** Hosts without CORS headers reject `crossorigin` loads; retry as a plain image. */
 const PHOTO_CORS_FALLBACK =
@@ -14,7 +21,12 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;');
 }
 
-function questionSlide(section: SectionAst, question: QuestionAst): string {
+function questionSlide(
+  section: SectionAst,
+  question: QuestionAst,
+  showWatermark: boolean,
+): string {
+  const stamp = showWatermark ? watermarkHtml() : '';
   const title = escapeHtml(section.sectionType);
   const stem = escapeHtml(question.question);
   const meta = [
@@ -54,6 +66,7 @@ function questionSlide(section: SectionAst, question: QuestionAst): string {
   <p class="meta">${escapeHtml(meta)}</p>
   ${body}
   </div>
+  ${stamp}
 </section>
 <section class="${slideClass} slide-answer" data-question-id="${escapeHtml(question.id)}-answer">
   ${photo}
@@ -62,16 +75,24 @@ function questionSlide(section: SectionAst, question: QuestionAst): string {
   <h2>${stem}</h2>
   <ul>${answerBody}</ul>
   </div>
+  ${stamp}
 </section>`;
 }
 
 /**
- * Static full-screen HTML slide deck (free tier). Pair with browser print → PDF.
+ * Static full-screen HTML slide deck. Free tier includes attribution; Pro omits it.
+ * Pair with browser print → PDF.
  */
-export function renderHtmlSlideDeck(ast: QuizAst): string {
+export function renderHtmlSlideDeck(
+  ast: QuizAst,
+  options: RenderHtmlSlideDeckOptions = {},
+): string {
+  const tier = options.tier ?? 'free';
+  const showWatermark = shouldWatermarkExport(tier);
   const slides = ast.sections.flatMap((section) =>
-    section.questions.map((q) => questionSlide(section, q)),
+    section.questions.map((q) => questionSlide(section, q, showWatermark)),
   );
+  const watermarkCss = showWatermark ? WATERMARK_CSS : '';
 
   const title = escapeHtml(ast.name);
 
@@ -141,6 +162,7 @@ export function renderHtmlSlideDeck(ast: QuizAst): string {
     .answer-key ol { columns: 3 16rem; column-gap: 2rem; font-size: 1rem; line-height: 1.6; }
     .answer-key li { break-inside: avoid; }
     @media print { .slide { page-break-after: always; min-height: auto; } }
+${watermarkCss}
   </style>
 </head>
 <body>
