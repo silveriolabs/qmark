@@ -24,6 +24,12 @@ export { formatAnswerLines } from './export/format-answer';
 export { renderHtmlSlideDeck } from './export/html-slides';
 
 export {
+  DEFAULT_PHOTO_ANCHOR,
+  isSupportedPhotoUrl,
+  resolvePhotoUrl,
+} from './photo/resolve-photo-url';
+
+export {
   isFeatureAvailable,
   PaidFeatureError,
   requireFeature,
@@ -33,9 +39,20 @@ export type { QMarkFeature, QMarkTier } from './tier/features';
 
 export {
   composeDocumentSchema,
+  PHOTO_ANCHORS,
+  QUESTION_TYPES,
   questionSchema,
   sectionSchema,
 } from './schema/compose';
+
+export { analyzeComposeYaml, lintComposeFiles, lintComposeYaml } from './lint';
+export type {
+  ComposeAnalysis,
+  LintDiagnostic,
+  LintOptions,
+  LintResult,
+  LintSeverity,
+} from './lint';
 export type {
   ComposeDocument,
   ComposeQuestion,

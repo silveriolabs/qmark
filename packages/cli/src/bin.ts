@@ -4,10 +4,17 @@ import { dirname, join, resolve } from 'node:path';
 import {
   compileComposeDirectory,
   compileComposeYaml,
+  lintComposeFiles,
   requireFeature,
   renderHtmlSlideDeck,
+  type ComposeFileInput,
 } from '@silverio-labs/qmark-core';
 import { writeQuizPdf } from './export-pdf';
+import {
+  displayPathResolver,
+  formatDiagnosticsJson,
+  formatDiagnosticsText,
+} from './format-diagnostics';
 import { loadCompileInput } from './load-input';
 
 declare const __filename: string;
@@ -16,8 +23,13 @@ const require = createRequire(__filename);
 const { version } = require('../package.json') as { version: string };
 
 const USAGE = `qmark compile <file-or-directory> [options]
+qmark lint <file-or-directory> [--format text|json]
 
-Options:
+Lint:
+  Validates qmark-compose.yml / *.qmc.yml and prints file:line:col with a fix hint.
+  Exits 1 on errors, 0 when there are only warnings.
+
+Compile options:
   --pdf           Export vector PDF (free)
   --html          Export static HTML slide deck (free)
   -o, --output    Output file path (default: ./qmark-out/quiz.pdf or .html)
@@ -87,8 +99,7 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
   }
 
   const absolute = resolve(target);
-  const files = loadCompileInput(absolute);
-  const isDirectory = statSync(absolute).isDirectory();
+  const { files, isDirectory } = loadAndLint(absolute, 'text');
   const ast = isDirectory
     ? compileComposeDirectory(files)
     : compileComposeYaml(files[0]!.content, { source: files[0]!.path });
@@ -120,6 +131,64 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
   }
 }
 
+class LintFailedError extends Error {}
+
+/** Loads input files and lints them; prints diagnostics and throws {@link LintFailedError} on errors. */
+function loadAndLint(
+  absolute: string,
+  format: 'text' | 'json',
+  printClean = false,
+): { files: ComposeFileInput[]; isDirectory: boolean } {
+  const files = loadCompileInput(absolute);
+  const isDirectory = statSync(absolute).isDirectory();
+  const displayPath = displayPathResolver(isDirectory ? absolute : dirname(absolute));
+  const result = lintComposeFiles(files);
+
+  if (format === 'json') {
+    console.log(formatDiagnosticsJson(result.diagnostics, displayPath));
+  } else if (result.diagnostics.length > 0) {
+    const text = formatDiagnosticsText(result.diagnostics, files, displayPath);
+    (result.ok ? console.warn : console.error)(text);
+  } else if (printClean) {
+    console.log(`No problems found in ${files.length} file(s).`);
+  }
+
+  if (!result.ok) {
+    throw new LintFailedError();
+  }
+  return { files, isDirectory };
+}
+
+function runLint(argv: string[]) {
+  let format: 'text' | 'json' = 'text';
+  const positional: string[] = [];
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]!;
+    if (arg === '-h' || arg === '--help') {
+      console.log(USAGE);
+      return;
+    }
+    if (arg === '--format') {
+      const next = argv[++i];
+      if (next !== 'text' && next !== 'json') {
+        throw new Error('--format must be text or json');
+      }
+      format = next;
+      continue;
+    }
+    if (arg.startsWith('-')) {
+      throw new Error(`Unknown option: ${arg}`);
+    }
+    positional.push(arg);
+  }
+
+  const target = positional[0];
+  if (!target) {
+    throw new Error('Missing path to qmark-compose.yml, *.qmc.yml, or quiz directory');
+  }
+  loadAndLint(resolve(target), format, true);
+}
+
 function slugify(name: string): string {
   return name
     .toLowerCase()
@@ -140,12 +209,16 @@ async function main() {
     process.exit(0);
   }
 
-  if (command !== 'compile') {
+  if (command !== 'compile' && command !== 'lint') {
     console.error(`Unknown command: ${command}\n\n${USAGE}`);
     process.exit(1);
   }
 
   try {
+    if (command === 'lint') {
+      runLint(rest);
+      return;
+    }
     const args = parseArgs(rest);
     if ('version' in args) {
       console.log(version);
@@ -157,8 +230,10 @@ async function main() {
     }
     await runCompile(args);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`Error: ${message}`);
+    if (!(error instanceof LintFailedError)) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Error: ${message}`);
+    }
     process.exit(1);
   }
 }

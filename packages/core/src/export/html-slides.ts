@@ -1,5 +1,10 @@
 import type { QuestionAst, QuizAst, SectionAst } from '../ast/types';
+import { DEFAULT_PHOTO_ANCHOR, resolvePhotoUrl } from '../photo/resolve-photo-url';
 import { formatAnswerLines } from './format-answer';
+
+/** Hosts without CORS headers reject `crossorigin` loads; retry as a plain image. */
+const PHOTO_CORS_FALLBACK =
+  "if(this.hasAttribute('crossorigin')){this.removeAttribute('crossorigin');this.src=this.src;}else{this.closest('figure').remove();}";
 
 function escapeHtml(text: string): string {
   return text
@@ -34,16 +39,29 @@ function questionSlide(section: SectionAst, question: QuestionAst): string {
     .map((line) => `<li>${escapeHtml(line)}</li>`)
     .join('');
 
-  return `<section class="slide" data-question-id="${escapeHtml(question.id)}">
+  const photoUrl = question.photo ? resolvePhotoUrl(question.photo) : undefined;
+  const anchor = question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR;
+  const photo = photoUrl
+    ? `<figure class="photo"><img src="${escapeHtml(photoUrl)}" alt="" crossorigin="anonymous" referrerpolicy="no-referrer" loading="lazy" decoding="async" onerror="${PHOTO_CORS_FALLBACK}" /></figure>`
+    : '';
+  const slideClass = photoUrl ? `slide has-photo photo-${anchor}` : 'slide';
+
+  return `<section class="${slideClass}" data-question-id="${escapeHtml(question.id)}">
+  ${photo}
+  <div class="content">
   <p class="kicker">${title}</p>
   <h2>${stem}</h2>
   <p class="meta">${escapeHtml(meta)}</p>
   ${body}
+  </div>
 </section>
-<section class="slide slide-answer" data-question-id="${escapeHtml(question.id)}-answer">
+<section class="${slideClass} slide-answer" data-question-id="${escapeHtml(question.id)}-answer">
+  ${photo}
+  <div class="content">
   <p class="kicker">Answer</p>
   <h2>${stem}</h2>
   <ul>${answerBody}</ul>
+  </div>
 </section>`;
 }
 
@@ -84,6 +102,29 @@ export function renderHtmlSlideDeck(ast: QuizAst): string {
     .kicker { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; color: #94a3b8; margin: 0 0 0.5rem; }
     h2 { font-size: clamp(1.5rem, 4vw, 2.75rem); line-height: 1.2; margin: 0 0 1rem; max-width: 40ch; }
     .meta { color: #64748b; font-size: 0.9rem; }
+    .slide.has-photo { position: relative; gap: 2rem; }
+    .photo { margin: 0; }
+    .photo img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 0.5rem; }
+    .photo-left, .photo-right { flex-direction: row; align-items: center; }
+    .photo-left .photo, .photo-right .photo { flex: 0 0 40%; max-height: 80vh; display: flex; justify-content: center; }
+    .photo-right .photo { order: 2; }
+    .photo-left .content, .photo-right .content { flex: 1; min-width: 0; }
+    .photo-center { align-items: center; text-align: center; }
+    .photo-center .photo img { max-height: 45vh; margin: 0 auto; }
+    .photo-center h2 { margin-inline: auto; }
+    .photo-center ul { display: inline-block; text-align: left; }
+    .photo-top-left .photo, .photo-top-right .photo,
+    .photo-bottom-left .photo, .photo-bottom-right .photo { position: absolute; width: min(32%, 28rem); height: 35vh; display: flex; }
+    .photo-top-left .photo { top: 2rem; left: 2rem; align-items: flex-start; }
+    .photo-top-right .photo { top: 2rem; right: 2rem; align-items: flex-start; justify-content: flex-end; }
+    .photo-bottom-left .photo { bottom: 2rem; left: 2rem; align-items: flex-end; }
+    .photo-bottom-right .photo { bottom: 2rem; right: 2rem; align-items: flex-end; justify-content: flex-end; }
+    .photo-top-left .content, .photo-top-right .content { padding-top: 35vh; }
+    .photo-bottom-left .content, .photo-bottom-right .content { padding-bottom: 35vh; }
+    @media (max-width: 720px) {
+      .photo-left, .photo-right { flex-direction: column; }
+      .photo-right .photo { order: 0; }
+    }
     ul { font-size: 1.25rem; line-height: 1.6; }
     .answer-key { padding: 2rem clamp(1.5rem, 5vw, 4rem); }
     .answer-key summary {

@@ -1,10 +1,102 @@
 import { createWriteStream } from 'node:fs';
 import PDFDocument from 'pdfkit';
-import { formatAnswerLines, type QuizAst } from '@silverio-labs/qmark-core';
+import {
+  DEFAULT_PHOTO_ANCHOR,
+  formatAnswerLines,
+  resolvePhotoUrl,
+  type PhotoAnchor,
+  type QuestionAst,
+  type QuizAst,
+} from '@silverio-labs/qmark-core';
+import { prefetchPhotos } from './fetch-photos';
+
+const PAGE = { width: 612, height: 792 };
+const PAGE_MARGIN = 48;
+const PHOTO_GAP = 16;
+const SIDE_PHOTO_RATIO = 0.4;
+const CORNER_PHOTO_WIDTH_RATIO = 0.45;
+const STACKED_PHOTO_HEIGHT_RATIO = 0.35;
+
+/** Adds a question page, drawing the photo and shrinking margins so text flows around it. */
+function addQuestionPage(doc: PDFKit.PDFDocument, photo: Buffer | undefined, anchor: PhotoAnchor) {
+  if (!photo) {
+    doc.addPage();
+    return;
+  }
+
+  const contentW = PAGE.width - PAGE_MARGIN * 2;
+  const contentH = PAGE.height - PAGE_MARGIN * 2;
+  const margins = { top: PAGE_MARGIN, bottom: PAGE_MARGIN, left: PAGE_MARGIN, right: PAGE_MARGIN };
+  let box: { x: number; y: number; w: number; h: number };
+  let align: 'left' | 'center' | 'right' = 'center';
+  let valign: 'top' | 'center' | 'bottom' = 'center';
+
+  const sideW = contentW * SIDE_PHOTO_RATIO;
+  const stackedH = contentH * STACKED_PHOTO_HEIGHT_RATIO;
+  const cornerW = contentW * CORNER_PHOTO_WIDTH_RATIO;
+
+  switch (anchor) {
+    case 'left':
+      box = { x: PAGE_MARGIN, y: PAGE_MARGIN, w: sideW, h: contentH };
+      margins.left += sideW + PHOTO_GAP;
+      break;
+    case 'right':
+      box = { x: PAGE.width - PAGE_MARGIN - sideW, y: PAGE_MARGIN, w: sideW, h: contentH };
+      margins.right += sideW + PHOTO_GAP;
+      break;
+    case 'center':
+      box = { x: PAGE_MARGIN, y: PAGE_MARGIN, w: contentW, h: stackedH };
+      margins.top += stackedH + PHOTO_GAP;
+      break;
+    case 'top-left':
+    case 'top-right':
+      box = {
+        x: anchor === 'top-left' ? PAGE_MARGIN : PAGE.width - PAGE_MARGIN - cornerW,
+        y: PAGE_MARGIN,
+        w: cornerW,
+        h: stackedH,
+      };
+      align = anchor === 'top-left' ? 'left' : 'right';
+      valign = 'top';
+      margins.top += stackedH + PHOTO_GAP;
+      break;
+    case 'bottom-left':
+    case 'bottom-right':
+      box = {
+        x: anchor === 'bottom-left' ? PAGE_MARGIN : PAGE.width - PAGE_MARGIN - cornerW,
+        y: PAGE.height - PAGE_MARGIN - stackedH,
+        w: cornerW,
+        h: stackedH,
+      };
+      align = anchor === 'bottom-left' ? 'left' : 'right';
+      valign = 'bottom';
+      margins.bottom += stackedH + PHOTO_GAP;
+      break;
+  }
+
+  doc.addPage({ size: [PAGE.width, PAGE.height], margins });
+  try {
+    doc.image(photo, box.x, box.y, {
+      fit: [box.w, box.h],
+      align: align === 'left' ? undefined : align,
+      valign: valign === 'top' ? undefined : valign,
+    });
+  } catch {
+    // Corrupt image data: leave the slot empty rather than failing the export.
+  }
+  doc.x = margins.left;
+  doc.y = margins.top;
+}
+
+function photoFor(question: QuestionAst, photos: Map<string, Buffer>): Buffer | undefined {
+  const url = question.photo ? resolvePhotoUrl(question.photo) : undefined;
+  return url ? photos.get(url) : undefined;
+}
 
 export async function writeQuizPdf(ast: QuizAst, outputPath: string): Promise<void> {
+  const photos = await prefetchPhotos(ast);
   await new Promise<void>((resolve, reject) => {
-    const doc = new PDFDocument({ autoFirstPage: false, margin: 48 });
+    const doc = new PDFDocument({ autoFirstPage: false, size: [PAGE.width, PAGE.height], margin: PAGE_MARGIN });
     const stream = createWriteStream(outputPath);
     doc.pipe(stream);
 
@@ -16,7 +108,7 @@ export async function writeQuizPdf(ast: QuizAst, outputPath: string): Promise<vo
 
     for (const section of ast.sections) {
       for (const question of section.questions) {
-        doc.addPage();
+        addQuestionPage(doc, photoFor(question, photos), question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR);
         doc.fontSize(10).fillColor('#666').text(section.sectionType.toUpperCase());
         doc.fillColor('#000').moveDown(0.5).fontSize(22).text(question.question);
         doc.moveDown().fontSize(10).fillColor('#888');
@@ -36,7 +128,7 @@ export async function writeQuizPdf(ast: QuizAst, outputPath: string): Promise<vo
           doc.text(`Right: ${question.right.join(', ')}`);
         }
 
-        doc.addPage();
+        addQuestionPage(doc, photoFor(question, photos), question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR);
         doc.fontSize(10).fillColor('#666').text('ANSWER');
         doc.fillColor('#000').moveDown(0.5).fontSize(20).text(question.question);
         doc.moveDown().fontSize(26);

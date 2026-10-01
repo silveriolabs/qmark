@@ -43,7 +43,7 @@ Optional:
 - `theme` — topic label
 - `difficulty` — `easy` | `medium` | `hard`
 - `photo` — image URL
-- `photo_anchor` — only when `photo` is set: `top-left` | `top-right` | `bottom-left` | `bottom-right` | `center`
+- `photo_anchor` — only when `photo` is set: `left` | `right` | `top-left` | `top-right` | `bottom-left` | `bottom-right` | `center`
 
 ### Type rules
 
@@ -88,3 +88,11 @@ Optional:
 
 - `photo` is optional. Omit both `photo` and `photo_anchor` when there is no image.
 - Do not set `photo_anchor` without `photo`.
+- `photo` must be `https://…`, `http://…`, or `s3://bucket/key` (the bucket must allow public reads). Default anchor is `right`.
+- HTML export links to the absolute URL. PDF export downloads the image at build time, so it must be public PNG or JPEG.
+
+### Linting
+
+- Run `qmark lint <file-or-folder>` before compiling. Each problem is reported as `file:line:col` with the offending line and a `fix:` hint.
+- Errors (schema violations, YAML syntax) block `qmark compile`. Warnings do not: unknown keys (silently ignored otherwise), duplicate question stems, and photo hosts that often block hotlinking.
+- Cross-field rules (for example `answer` must appear in `options`) are checked once the question's fields have valid types, so fix type errors first and re-run.

@@ -1,6 +1,6 @@
 {
   "name": "@silverio-labs/qmark-cli",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "CLI for quiz and assessment export in education: compile YAML presentations to PDF, HTML slide decks, and printable materials",
   "keywords": [
     "quiz",

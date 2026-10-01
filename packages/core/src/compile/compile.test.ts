@@ -12,7 +12,7 @@ import {
 
 const root = join(fileURLToPath(new URL('.', import.meta.url)), '../../../..');
 const exampleYaml = readFileSync(
-  join(root, '_docs/qmark-compose.yml'),
+  join(root, '_quiz_samples/qmark-compose.yml'),
   'utf8',
 );
 

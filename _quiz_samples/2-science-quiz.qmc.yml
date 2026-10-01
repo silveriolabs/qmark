@@ -1,0 +1,110 @@
+# Short science-themed samples — one section per question `type`.
+# Each item is one Q (stem) + A (answer field). Optional: photo, photo_anchor, theme, difficulty.
+# type: multiple-choice | multiple-select | boolean | fill-blank | short-answer | matching | ordering
+version: "1.0.0"
+name: Simple Science Quiz
+sections:
+  - sectionType: Multiple choice
+    instructions: Select the correct answer.
+    goal: Sample multiple-choice (one correct option).
+    questions:
+      - question: What planet is known as the Red Planet?
+        type: multiple-choice
+        difficulty: easy
+        theme: Astronomy
+        options:
+          - Mars
+          - Venus
+          - Jupiter
+        answer: Mars
+        photo: https://t3.ftcdn.net/jpg/02/14/13/14/360_F_214131404_BD1k2AXYMNNfUGemosLGl50jYGAcmCmo.jpg
+        photo_anchor: center
+
+  - sectionType: Multiple select
+    instructions: Select all correct answers.
+    goal: Sample multiple-select (answer is a list).
+    questions:
+      - question: Which of these are noble gases?
+        type: multiple-select
+        difficulty: easy
+        theme: Chemistry
+        options:
+          - Helium
+          - Oxygen
+          - Neon
+          - Nitrogen
+        answer:
+          - Helium
+          - Neon
+
+  - sectionType: Boolean
+    instructions: True or false for each statement.
+    goal: Sample boolean (no options).
+    questions:
+      - question: Water freezes at 0 degrees Celsius.
+        type: boolean
+        difficulty: easy
+        theme: Chemistry
+        answer: true
+
+  - sectionType: Fill in the blank
+    instructions: Fill in the blank (use ____ in the stem).
+    goal: Sample fill-blank.
+    questions:
+      - question: The chemical symbol for gold is ____.
+        type: fill-blank
+        difficulty: easy
+        theme: Chemistry
+        answer: Au
+        photo: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV0vJeEtWrjxuZXIyLzPrAsfIOq3Fr1Gqo97cGkewMLw&s
+        photo_anchor: center
+
+  - sectionType: Short answer
+    instructions: Type the correct answer.
+    goal: Sample short-answer (string or list of acceptable strings).
+    questions:
+      - question: What gas do plants absorb during photosynthesis?
+        type: short-answer
+        difficulty: easy
+        theme: Biology
+        answer:
+          - carbon dioxide
+          - CO2
+
+  - sectionType: Matching
+    instructions: Match each item on the left to the right.
+    goal: Sample matching (left/right same length; answer is a map).
+    questions:
+      - question: Match each planet to its order from the Sun.
+        type: matching
+        difficulty: medium
+        theme: Astronomy
+        left:
+          - Mercury
+          - Earth
+          - Mars
+        right:
+          - 1st
+          - 3rd
+          - 4th
+        answer:
+          Mercury: 1st
+          Earth: 3rd
+          Mars: 4th
+
+  - sectionType: Ordering
+    instructions: Put the items in the correct order.
+    goal: Sample ordering (options shuffled; answer is correct sequence).
+    questions:
+      - question: Order the states of matter from lowest to highest typical thermal energy.
+        type: ordering
+        difficulty: medium
+        theme: Physics
+        options:
+          - Gas
+          - Solid
+          - Liquid
+        answer:
+          - Solid
+          - Liquid
+          - Gas

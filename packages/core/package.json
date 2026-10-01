@@ -1,6 +1,6 @@
 {
   "name": "@silverio-labs/qmark-core",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "TypeScript quiz and assessment library for education and e-learning: YAML parser and renderer for presentations, Canvas/SVG, and HTML slide decks",
   "keywords": [
     "quiz",
@@ -40,7 +40,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx src/compile/compile.test.ts"
+    "test": "node --import tsx src/compile/compile.test.ts && node --import tsx src/lint/lint.test.ts"
   },
   "devDependencies": {
     "tsup": "^8.0.0",

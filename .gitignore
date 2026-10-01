@@ -76,3 +76,4 @@ qmark-out/
 # Others
 # ==========================================
 # Keep qmark-compose.yml / *.qmc.yml tracked (authoring source files).
+test/

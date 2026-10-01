@@ -8,6 +8,7 @@ import type {
   QuizAst,
   SectionAst,
 } from './types';
+import { resolvePhotoUrl } from '../photo/resolve-photo-url';
 
 export interface NormalizeOptions {
   /** Basename or logical id of the source file (for multi-module merges). */
@@ -28,7 +29,9 @@ function normalizeQuestion(
     type: question.type,
     ...(question.theme !== undefined ? { theme: question.theme } : {}),
     ...(question.difficulty !== undefined ? { difficulty: question.difficulty } : {}),
-    ...(question.photo !== undefined ? { photo: question.photo } : {}),
+    ...(question.photo !== undefined
+      ? { photo: resolvePhotoUrl(question.photo) ?? question.photo }
+      : {}),
     ...(question.photo_anchor !== undefined
       ? { photoAnchor: question.photo_anchor }
       : {}),

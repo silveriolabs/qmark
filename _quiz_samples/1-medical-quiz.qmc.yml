@@ -1,0 +1,112 @@
+# Short medical-themed samples — one section per question `type`.
+# Each item is one Q (stem) + A (answer field). Optional: photo, photo_anchor, theme, difficulty.
+# type: multiple-choice | multiple-select | boolean | fill-blank | short-answer | matching | ordering
+version: "1.0.0"
+name: Simple Medical Quiz
+sections:
+  - sectionType: Multiple choice
+    instructions: Select the correct answer.
+    goal: Sample multiple-choice (one correct option).
+    questions:
+      - question: Which heart chamber pumps deoxygenated blood to the lungs?
+        type: multiple-choice
+        difficulty: easy
+        theme: Cardiology
+        options:
+          - Right ventricle
+          - Left ventricle
+          - Left atrium
+          - Aorta
+        answer: Right ventricle
+        photo: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnWr7D8qNLU1tzj2iN9xLyBghrQBbUj6uJzADViK3yNaDt_vDP14iBz70I&s=10
+        photo_anchor: right
+
+  - sectionType: Multiple select
+    instructions: Select all correct answers.
+    goal: Sample multiple-select (answer is a list).
+    questions:
+      - question: Which of the following are classic symptoms of acute myocardial infarction?
+        type: multiple-select
+        difficulty: medium
+        theme: Emergency medicine
+        options:
+          - Chest pain or pressure
+          - Sudden hair loss
+          - Shortness of breath
+          - Diaphoresis
+        answer:
+          - Chest pain or pressure
+          - Shortness of breath
+          - Diaphoresis
+
+  - sectionType: Boolean
+    instructions: True or false for each statement.
+    goal: Sample boolean (no options).
+    questions:
+      - question: In most healthy adults, a resting heart rate of 60–100 beats per minute is considered normal.
+        type: boolean
+        difficulty: easy
+        theme: Vital signs
+        answer: true
+
+  - sectionType: Fill in the blank
+    instructions: Fill in the blank (use ____ in the stem).
+    goal: Sample fill-blank.
+    questions:
+      - question: The hormone ____ lowers blood glucose by promoting uptake into cells.
+        type: fill-blank
+        difficulty: easy
+        theme: Endocrinology
+        answer: insulin
+        photo: https://media.istockphoto.com/id/653533198/vector/pancreas-and-surrounding-organs.jpg?s=612x612&w=0&k=20&c=0cFj4mdTiCpkYQ5EtwV_Ds-x0CFpY5kKDFKHHm8kfO0=
+        photo_anchor: center
+
+  - sectionType: Short answer
+    instructions: Type the correct answer.
+    goal: Sample short-answer (string or list of acceptable strings).
+    questions:
+      - question: What is the medical term for persistently elevated arterial blood pressure?
+        type: short-answer
+        difficulty: easy
+        theme: Cardiology
+        answer:
+          - hypertension
+          - high blood pressure
+
+  - sectionType: Matching
+    instructions: Match each item on the left to the right.
+    goal: Sample matching (left/right same length; answer is a map).
+    questions:
+      - question: Match each organ to its primary physiological role.
+        type: matching
+        difficulty: medium
+        theme: Anatomy
+        left:
+          - Heart
+          - Lungs
+          - Kidneys
+        right:
+          - Pump blood through the circulation
+          - Exchange oxygen and carbon dioxide
+          - Filter blood and regulate fluid balance
+        answer:
+          Heart: Pump blood through the circulation
+          Lungs: Exchange oxygen and carbon dioxide
+          Kidneys: Filter blood and regulate fluid balance
+
+  - sectionType: Ordering
+    instructions: Put the items in the correct order.
+    goal: Sample ordering (options shuffled; answer is correct sequence).
+    questions:
+      - question: Order the phases of wound healing from earliest to latest.
+        type: ordering
+        difficulty: medium
+        theme: Pathophysiology
+        options:
+          - Remodeling (maturation)
+          - Hemostasis and inflammation
+          - Proliferation
+        answer:
+          - Hemostasis and inflammation
+          - Proliferation
+          - Remodeling (maturation)
