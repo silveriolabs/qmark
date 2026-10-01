@@ -3,12 +3,14 @@ import PDFDocument from 'pdfkit';
 import {
   DEFAULT_PHOTO_ANCHOR,
   formatAnswerLines,
+  iterateDeckFrames,
   resolvePhotoUrl,
   shouldWatermarkExport,
   type PhotoAnchor,
   type QMarkTier,
   type QuestionAst,
   type QuizAst,
+  type SectionAst,
 } from '@silverio-labs/qmark-core';
 import { prefetchPhotos } from './fetch-photos';
 import { applyPdfWatermark } from './watermark-pdf';
@@ -96,6 +98,16 @@ function photoFor(question: QuestionAst, photos: Map<string, Buffer>): Buffer | 
   return url ? photos.get(url) : undefined;
 }
 
+function addSectionIntroPage(doc: PDFKit.PDFDocument, section: SectionAst): void {
+  doc.addPage();
+  doc.fontSize(10).fillColor('#666').text(section.sectionType.toUpperCase());
+  doc.fillColor('#000').moveDown(0.75).fontSize(14).text('Instructions');
+  doc.moveDown(0.25).fontSize(16).text(section.instructions);
+  doc.moveDown().fontSize(14).text('Goal');
+  doc.moveDown(0.25).fontSize(16).fillColor('#444').text(section.goal);
+  doc.fillColor('#000');
+}
+
 export interface WriteQuizPdfOptions {
   tier?: QMarkTier;
 }
@@ -121,34 +133,44 @@ export async function writeQuizPdf(
     });
     doc.fillColor('#000');
 
-    for (const section of ast.sections) {
-      for (const question of section.questions) {
-        addQuestionPage(doc, photoFor(question, photos), question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR);
-        doc.fontSize(10).fillColor('#666').text(section.sectionType.toUpperCase());
-        doc.fillColor('#000').moveDown(0.5).fontSize(22).text(question.question);
-        doc.moveDown().fontSize(10).fillColor('#888');
-        doc.text([question.type, question.difficulty, question.theme].filter(Boolean).join(' · '));
-        doc.fillColor('#000').moveDown();
+    for (const frame of iterateDeckFrames(ast)) {
+      switch (frame.kind) {
+        case 'section-intro':
+          addSectionIntroPage(doc, frame.section);
+          break;
+        case 'question': {
+          const { section, question } = frame;
+          addQuestionPage(doc, photoFor(question, photos), question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR);
+          doc.fontSize(10).fillColor('#666').text(section.sectionType.toUpperCase());
+          doc.fillColor('#000').moveDown(0.5).fontSize(22).text(question.question);
+          doc.moveDown().fontSize(10).fillColor('#888');
+          doc.text([question.type, question.difficulty, question.theme].filter(Boolean).join(' · '));
+          doc.fillColor('#000').moveDown();
 
-        if (question.type === 'multiple-choice' || question.type === 'multiple-select') {
-          for (const option of question.options) {
-            doc.fontSize(16).text(`• ${option}`);
+          if (question.type === 'multiple-choice' || question.type === 'multiple-select') {
+            for (const option of question.options) {
+              doc.fontSize(16).text(`• ${option}`);
+            }
+          } else if (question.type === 'ordering') {
+            for (const option of question.options) {
+              doc.fontSize(16).text(`• ${option}`);
+            }
+          } else if (question.type === 'matching') {
+            doc.fontSize(16).text(`Left: ${question.left.join(', ')}`);
+            doc.text(`Right: ${question.right.join(', ')}`);
           }
-        } else if (question.type === 'ordering') {
-          for (const option of question.options) {
-            doc.fontSize(16).text(`• ${option}`);
-          }
-        } else if (question.type === 'matching') {
-          doc.fontSize(16).text(`Left: ${question.left.join(', ')}`);
-          doc.text(`Right: ${question.right.join(', ')}`);
+          break;
         }
-
-        addQuestionPage(doc, photoFor(question, photos), question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR);
-        doc.fontSize(10).fillColor('#666').text('ANSWER');
-        doc.fillColor('#000').moveDown(0.5).fontSize(20).text(question.question);
-        doc.moveDown().fontSize(26);
-        for (const line of formatAnswerLines(question)) {
-          doc.text(line);
+        case 'answer': {
+          const { question } = frame;
+          addQuestionPage(doc, photoFor(question, photos), question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR);
+          doc.fontSize(10).fillColor('#666').text('ANSWER');
+          doc.fillColor('#000').moveDown(0.5).fontSize(20).text(question.question);
+          doc.moveDown().fontSize(26);
+          for (const line of formatAnswerLines(question)) {
+            doc.text(line);
+          }
+          break;
         }
       }
     }

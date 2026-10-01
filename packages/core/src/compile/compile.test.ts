@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import {
   compile,
   compileComposeYaml,
+  iterateDeckFrames,
   parseQuizFromYaml,
   requireFeature,
   renderHtmlSlideDeck,
@@ -83,13 +84,22 @@ try {
 }
 assert.equal(paidBlocked, true);
 
+const deckFixture = compileComposeYaml(moduleA, { source: 'deck-fixture.qmc.yml' });
+const deckKinds = [...iterateDeckFrames(deckFixture)].map((f) => f.kind);
+assert.deepEqual(deckKinds, ['section-intro', 'question', 'answer']);
+
 const freeHtml = renderHtmlSlideDeck(ast, { tier: 'free' });
 assert.ok(freeHtml.includes(WATERMARK.before));
+assert.ok(freeHtml.includes('slide-section-intro'));
+assert.ok(freeHtml.includes('Select the correct answer from the options provided.'));
+assert.ok(freeHtml.indexOf('slide-section-intro') < freeHtml.indexOf('data-question-id="s-1-q1"'));
 const proHtml = renderHtmlSlideDeck(ast, { tier: 'pro' });
 assert.ok(!proHtml.includes('class="watermark"'));
 
 const freeSvg = renderSvgSlideDeck(ast, { tier: 'free' });
 assert.ok(freeSvg.includes(WATERMARK.before));
+assert.ok(freeSvg.includes('Instructions'));
+assert.ok(freeSvg.includes('Select the correct answer from the options provided.'));
 const proSvg = renderSvgSlideDeck(ast, { tier: 'pro' });
 assert.ok(!proSvg.includes(WATERMARK.before));
 

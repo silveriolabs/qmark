@@ -1,6 +1,7 @@
 import type { QuestionAst, QuizAst, SectionAst } from '../ast/types';
 import { shouldWatermarkExport, type QMarkTier } from '../tier/features';
 import { WATERMARK_TEXT } from '../watermark/watermark';
+import { iterateDeckFrames } from './deck-sequence';
 import { formatAnswerLines } from './format-answer';
 
 const SLIDE_W = 612;
@@ -133,6 +134,45 @@ function renderSlide(
   return `<g>${parts.join('\n')}</g>`;
 }
 
+function renderSectionIntroSlide(
+  y0: number,
+  section: SectionAst,
+  showWatermark: boolean,
+): string {
+  const contentW = SLIDE_W - MARGIN * 2;
+  let y = y0 + MARGIN;
+  const parts: string[] = [slideBackground(y0)];
+
+  parts.push(
+    textBlock(MARGIN, y, [section.sectionType.toUpperCase()], 12, '#64748b'),
+  );
+  y += LINE + 8;
+
+  parts.push(textBlock(MARGIN, y, ['Instructions'], 14, '#0f172a', '600'));
+  y += 20;
+  for (const line of wrapText(section.instructions, contentW, 16)) {
+    parts.push(textBlock(MARGIN, y, [line], 16, '#334155'));
+    y += 22;
+  }
+  y += 12;
+
+  parts.push(textBlock(MARGIN, y, ['Goal'], 14, '#0f172a', '600'));
+  y += 20;
+  for (const line of wrapText(section.goal, contentW, 16)) {
+    parts.push(textBlock(MARGIN, y, [line], 16, '#64748b'));
+    y += 22;
+  }
+
+  if (showWatermark) {
+    const wy = y0 + SLIDE_H - MARGIN;
+    parts.push(
+      `<text x="${SLIDE_W / 2}" y="${wy}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">${escapeXml(WATERMARK_TEXT)}</text>`,
+    );
+  }
+
+  return `<g>${parts.join('\n')}</g>`;
+}
+
 /**
  * Static SVG slide deck (vector handouts). Free tier includes attribution; Pro omits it.
  */
@@ -145,15 +185,24 @@ export function renderSvgSlideDeck(
   const groups: string[] = [];
 
   let slideIndex = 0;
-  for (const section of ast.sections) {
-    for (const question of section.questions) {
-      const y0 = slideIndex * SLIDE_H;
-      groups.push(renderSlide(y0, section, question, 'question', showWatermark));
-      slideIndex += 1;
-      const y1 = slideIndex * SLIDE_H;
-      groups.push(renderSlide(y1, section, question, 'answer', showWatermark));
-      slideIndex += 1;
+  for (const frame of iterateDeckFrames(ast)) {
+    const y0 = slideIndex * SLIDE_H;
+    switch (frame.kind) {
+      case 'section-intro':
+        groups.push(renderSectionIntroSlide(y0, frame.section, showWatermark));
+        break;
+      case 'question':
+        groups.push(
+          renderSlide(y0, frame.section, frame.question, 'question', showWatermark),
+        );
+        break;
+      case 'answer':
+        groups.push(
+          renderSlide(y0, frame.section, frame.question, 'answer', showWatermark),
+        );
+        break;
     }
+    slideIndex += 1;
   }
 
   const totalH = slideIndex * SLIDE_H;

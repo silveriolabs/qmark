@@ -2,6 +2,7 @@ import type { QuestionAst, QuizAst, SectionAst } from '../ast/types';
 import { DEFAULT_PHOTO_ANCHOR, resolvePhotoUrl } from '../photo/resolve-photo-url';
 import { shouldWatermarkExport, type QMarkTier } from '../tier/features';
 import { WATERMARK_CSS, watermarkHtml } from '../watermark/watermark';
+import { iterateDeckFrames } from './deck-sequence';
 import { formatAnswerLines } from './format-answer';
 
 export interface RenderHtmlSlideDeckOptions {
@@ -21,7 +22,35 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;');
 }
 
-function questionSlide(
+function sectionIntroSlide(section: SectionAst, showWatermark: boolean): string {
+  const stamp = showWatermark ? watermarkHtml() : '';
+  const title = escapeHtml(section.sectionType);
+  const instructions = escapeHtml(section.instructions);
+  const goal = escapeHtml(section.goal);
+
+  return `<section class="slide slide-section-intro" data-section-id="${escapeHtml(section.id)}">
+  <div class="content">
+  <p class="kicker">${title}</p>
+  <h3 class="intro-heading">Instructions</h3>
+  <p class="intro-body">${instructions}</p>
+  <h3 class="intro-heading">Goal</h3>
+  <p class="intro-body goal">${goal}</p>
+  </div>
+  ${stamp}
+</section>`;
+}
+
+function photoMarkup(question: QuestionAst): { photo: string; slideClass: string } {
+  const photoUrl = question.photo ? resolvePhotoUrl(question.photo) : undefined;
+  const anchor = question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR;
+  const photo = photoUrl
+    ? `<figure class="photo"><img src="${escapeHtml(photoUrl)}" alt="" crossorigin="anonymous" referrerpolicy="no-referrer" loading="lazy" decoding="async" onerror="${PHOTO_CORS_FALLBACK}" /></figure>`
+    : '';
+  const slideClass = photoUrl ? `slide has-photo photo-${anchor}` : 'slide';
+  return { photo, slideClass };
+}
+
+function questionSlideHtml(
   section: SectionAst,
   question: QuestionAst,
   showWatermark: boolean,
@@ -47,16 +76,7 @@ function questionSlide(
     body = `<ul>${question.options.map((o) => `<li>${escapeHtml(o)}</li>`).join('')}</ul>`;
   }
 
-  const answerBody = formatAnswerLines(question)
-    .map((line) => `<li>${escapeHtml(line)}</li>`)
-    .join('');
-
-  const photoUrl = question.photo ? resolvePhotoUrl(question.photo) : undefined;
-  const anchor = question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR;
-  const photo = photoUrl
-    ? `<figure class="photo"><img src="${escapeHtml(photoUrl)}" alt="" crossorigin="anonymous" referrerpolicy="no-referrer" loading="lazy" decoding="async" onerror="${PHOTO_CORS_FALLBACK}" /></figure>`
-    : '';
-  const slideClass = photoUrl ? `slide has-photo photo-${anchor}` : 'slide';
+  const { photo, slideClass } = photoMarkup(question);
 
   return `<section class="${slideClass}" data-question-id="${escapeHtml(question.id)}">
   ${photo}
@@ -67,8 +87,19 @@ function questionSlide(
   ${body}
   </div>
   ${stamp}
-</section>
-<section class="${slideClass} slide-answer" data-question-id="${escapeHtml(question.id)}-answer">
+</section>`;
+}
+
+function answerSlideHtml(question: QuestionAst, showWatermark: boolean): string {
+  const stamp = showWatermark ? watermarkHtml() : '';
+  const stem = escapeHtml(question.question);
+  const answerBody = formatAnswerLines(question)
+    .map((line) => `<li>${escapeHtml(line)}</li>`)
+    .join('');
+
+  const { photo, slideClass } = photoMarkup(question);
+
+  return `<section class="${slideClass} slide-answer" data-question-id="${escapeHtml(question.id)}-answer">
   ${photo}
   <div class="content">
   <p class="kicker">Answer</p>
@@ -89,9 +120,24 @@ export function renderHtmlSlideDeck(
 ): string {
   const tier = options.tier ?? 'free';
   const showWatermark = shouldWatermarkExport(tier);
-  const slides = ast.sections.flatMap((section) =>
-    section.questions.map((q) => questionSlide(section, q, showWatermark)),
-  );
+  const slides: string[] = [];
+  for (const frame of iterateDeckFrames(ast)) {
+    switch (frame.kind) {
+      case 'section-intro':
+        slides.push(sectionIntroSlide(frame.section, showWatermark));
+        break;
+      case 'question':
+        slides.push(questionSlideHtml(frame.section, frame.question, showWatermark));
+        break;
+      case 'answer':
+        slides.push(answerSlideHtml(frame.question, showWatermark));
+        break;
+      default: {
+        const _exhaustive: never = frame;
+        throw new Error(`Unknown deck frame: ${JSON.stringify(_exhaustive)}`);
+      }
+    }
+  }
   const watermarkCss = showWatermark ? WATERMARK_CSS : '';
 
   const title = escapeHtml(ast.name);
@@ -122,6 +168,11 @@ export function renderHtmlSlideDeck(
     }
     .kicker { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; color: #94a3b8; margin: 0 0 0.5rem; }
     h2 { font-size: clamp(1.5rem, 4vw, 2.75rem); line-height: 1.2; margin: 0 0 1rem; max-width: 40ch; }
+    .slide-section-intro .content { max-width: 48ch; }
+    .intro-heading { font-size: 1.1rem; font-weight: 600; margin: 1.25rem 0 0.35rem; color: #e2e8f0; }
+    .intro-heading:first-of-type { margin-top: 0.75rem; }
+    .intro-body { font-size: 1.25rem; line-height: 1.5; margin: 0; color: #cbd5e1; }
+    .intro-body.goal { color: #94a3b8; }
     .meta { color: #64748b; font-size: 0.9rem; }
     .slide.has-photo { position: relative; gap: 2rem; }
     .photo { margin: 0; }
