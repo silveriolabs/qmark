@@ -1,6 +1,6 @@
 {
   "name": "@silverio-labs/qmark-core",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "TypeScript quiz and assessment library for education and e-learning: YAML parser and renderer for presentations, Canvas/SVG, and HTML slide decks",
   "keywords": [
     "quiz",
@@ -16,7 +16,7 @@
     "svg"
   ],
   "author": "Silverio Labs <https://silverio-labs.com>",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "LicenseRef-QMark",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

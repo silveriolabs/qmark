@@ -2,7 +2,7 @@
 
 This package reads a QMark quiz file and hands your app a structured quiz you can show on screen—useful for **self-study apps** and course tools in **K–12, undergraduate, and graduate** settings.
 
-Write the quiz as **`qmark-compose.yml`** (one quiz) or as **`*.qmc.yml`** files such as `1-science-quiz.qmc.yml` (one part each). A folder can hold the main file plus any number of `.qmc.yml` parts. QMark combines them into one quiz.
+Write each quiz or unit as **`<quiz-name>.qmc.yml`** (primary)—for example `1-science-quiz.qmc.yml`. Optionally add at most one **`qmark-compose.yml`** per folder as a root file. QMark combines directory inputs into one quiz.
 
 **Learn more and stay up to date**
 
@@ -35,8 +35,12 @@ for (const d of diagnostics) {
 }
 ```
 
-`parseQuizFromYaml` accepts one file’s text. `compileComposeDirectory` accepts the same set of files the CLI would load from a folder. `renderHtmlSlideDeck(ast)` returns a static HTML slideshow. `requireFeature` blocks Pro-only features on the free tier.
+`parseQuizFromYaml` accepts one file’s text (typically a `<quiz-name>.qmc.yml` module). `compileComposeDirectory` accepts the same set of files the CLI would load from a folder. `renderHtmlSlideDeck(ast, { tier })` and `renderSvgSlideDeck(ast, { tier })` return static exports (free tier includes attribution). `shouldWatermarkExport` and `requireFeature` enforce tier rules.
 
 PDF and HTML export, and parsing, are free. PowerPoint, animations, branded themes, timers, and collaboration are on [QMark Pro](https://silverio-labs.com/qmark).
 
 Sample modules and the full compose spec live in the [qmark repository](https://github.com/silveriolabs/qmark) (`_quiz_samples/`).
+
+## License
+
+QMark License (`LicenseRef-QMark`). Free to use, including commercially, and to share unmodified. Modifying or building derivative works is not allowed. Pro and Enterprise features need a subscription from [silverio-labs.com/qmark](https://silverio-labs.com/qmark). Full terms are in the `LICENSE` file shipped with this package.

@@ -2,7 +2,7 @@ import { ComposeResolutionError } from '../errors';
 
 /** Logical file passed into the compiler (browser-safe; no filesystem). */
 export interface ComposeFileInput {
-  /** Path relative to the quiz directory, e.g. `qmark-compose.yml` or `intro.qmc.yml`. */
+  /** Path relative to the quiz directory, e.g. `intro.qmc.yml` or optional `qmark-compose.yml`. */
   path: string;
   content: string;
 }

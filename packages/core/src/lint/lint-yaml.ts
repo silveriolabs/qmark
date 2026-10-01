@@ -204,7 +204,7 @@ export function lintComposeFiles(files: ComposeFileInput[]): LintResult {
       severity: 'error',
       code: 'invalid-file-set',
       message: error.message,
-      hint: 'keep at most one qmark-compose.yml plus any number of *.qmc.yml files',
+      hint: 'use <quiz-name>.qmc.yml modules; keep at most one optional qmark-compose.yml per folder',
     });
   }
 

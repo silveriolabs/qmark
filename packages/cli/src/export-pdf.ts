@@ -4,11 +4,14 @@ import {
   DEFAULT_PHOTO_ANCHOR,
   formatAnswerLines,
   resolvePhotoUrl,
+  shouldWatermarkExport,
   type PhotoAnchor,
+  type QMarkTier,
   type QuestionAst,
   type QuizAst,
 } from '@silverio-labs/qmark-core';
 import { prefetchPhotos } from './fetch-photos';
+import { applyPdfWatermark } from './watermark-pdf';
 
 const PAGE = { width: 612, height: 792 };
 const PAGE_MARGIN = 48;
@@ -93,12 +96,24 @@ function photoFor(question: QuestionAst, photos: Map<string, Buffer>): Buffer | 
   return url ? photos.get(url) : undefined;
 }
 
-export async function writeQuizPdf(ast: QuizAst, outputPath: string): Promise<void> {
+export interface WriteQuizPdfOptions {
+  tier?: QMarkTier;
+}
+
+export async function writeQuizPdf(
+  ast: QuizAst,
+  outputPath: string,
+  options: WriteQuizPdfOptions = {},
+): Promise<void> {
+  const tier = options.tier ?? 'free';
   const photos = await prefetchPhotos(ast);
   await new Promise<void>((resolve, reject) => {
     const doc = new PDFDocument({ autoFirstPage: false, size: [PAGE.width, PAGE.height], margin: PAGE_MARGIN });
     const stream = createWriteStream(outputPath);
     doc.pipe(stream);
+    if (shouldWatermarkExport(tier)) {
+      applyPdfWatermark(doc);
+    }
 
     doc.addPage().fontSize(32).text(ast.name, { align: 'center' });
     doc.moveDown().fontSize(16).fillColor('#555').text(`Version ${ast.version}`, {

@@ -1,3 +1,15 @@
+## Product phases (vision vs shipped)
+
+| Phase | Focus | Status in this repo |
+|-------|--------|---------------------|
+| **1 — Authoring & static export** | Canonical YAML, lint, compile to AST, CLI `--html` / `--pdf` / `--svg`, tier attribution on free exports | **Shipped** (`@silverio-labs/qmark-core`, `@silverio-labs/qmark-cli`) |
+| **2 — Interactive runtime** | Self-grading HTML5 in the browser, Canvas/SVG/PNG **live** rendering, instant feedback | **Planned** (static slides + answer key today, not interactive grading) |
+| **3 — QMark Pro services** | PPTX, themes, timers, collaboration, cloud uploads, enterprise compliance | **Partially gated** (`requireFeature` + `TIER_MATRIX`; PPTX and most Pro rows not implemented yet) |
+
+Marketing copy on [silverio-labs.com/qmark](https://silverio-labs.com/qmark) describes the full vision; use the table above to see what the open-source CLI and core library do today.
+
+---
+
 Phase 1: Core Engine & Syntax (Steps 1–3)
 1. Define the Canonical YAML Schema
 
@@ -13,13 +25,13 @@ Package the core rendering engine into a single npm library. Pushing updates her
 
 ## Rules
 
-How to write `qmark-compose.yml`. Full example: `_quiz_samples/qmark-compose.yml`. Short modules: `_quiz_samples/1-medical-quiz.qmc.yml`, `_quiz_samples/2-science-quiz.qmc.yml`.
+How to write quiz YAML. **Primary filename:** `<quiz-name>.qmc.yml` (one quiz or unit per file). Examples: `_quiz_samples/1-medical-quiz.qmc.yml`, `_quiz_samples/2-science-quiz.qmc.yml`. **Optional:** `_quiz_samples/qmark-compose.yml` (at most one per folder).
 
 ### Project layout
 
-- **Single quiz:** one `qmark-compose.yml` (`.yaml` also accepted).
-- **Multi-part quiz:** additional `<name>.qmc.yml` files in the same folder (e.g. `math.qmc.yml`).
-- **Compiler / CLI:** pass the **directory**; the engine loads `qmark-compose.yml` and every `*.qmc.yml`, then merges into one AST.
+- **Primary (recommended):** one or more `<quiz-name>.qmc.yml` files in a folder (e.g. `math.qmc.yml`, `1-medical-quiz.qmc.yml`). Modules-only folders are valid full quizzes.
+- **Optional root file:** at most one `qmark-compose.yml` (`.yaml` also accepted), merged before `.qmc.yml` files when both are present.
+- **Compiler / CLI:** pass a **file** (`*.qmc.yml` or `qmark-compose.yml`) or a **directory**; the engine loads optional `qmark-compose.yml` and every `*.qmc.yml`, then merges into one AST.
 
 ### Document
 

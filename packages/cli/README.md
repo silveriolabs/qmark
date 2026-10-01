@@ -2,7 +2,7 @@
 
 Turn a QMark quiz file into a PDF or an HTML slideshow from the terminal—handy when **you** want printable or offline review for a class, exam, or lab without building a full app.
 
-Name a single quiz **`qmark-compose.yml`**. Name extra parts **`something.qmc.yml`**, for example `1-science-quiz.qmc.yml`. You can pass one file, or a folder that contains the main file and any `.qmc.yml` parts. QMark merges that folder into one quiz.
+**Primary:** name each quiz or unit **`<quiz-name>.qmc.yml`**, for example `1-science-quiz.qmc.yml`. **Optional:** at most one **`qmark-compose.yml`** per folder when you want a root file. Pass one module file, a modules-only folder, or a folder with compose plus modules. QMark merges directory inputs into one quiz.
 
 **Learn more and stay up to date**
 
@@ -14,12 +14,13 @@ We recommend bookmarking both: the site for releases and licensing, the repo for
 ```bash
 npm install -g @silverio-labs/qmark-cli@latest
 qmark lint ./my-quiz-folder
-qmark compile ./qmark-compose.yml --pdf
 qmark compile ./2-science-quiz.qmc.yml --html
 qmark compile ./my-quiz-folder --pdf
+qmark compile ./my-quiz-folder --svg
+qmark compile ./qmark-compose.yml --pdf
 ```
 
-PDF and HTML are free. The result is written to `qmark-out` unless you pass `-o` with a file path. Editable PowerPoint (`--pptx`) is part of [QMark Pro](https://silverio-labs.com/qmark).
+PDF and HTML are free (with export attribution on the free tier). The result is written to `qmark-out` unless you pass `-o` with a file path. Pass `--tier pro` for attribution-free exports. Editable PowerPoint (`--pptx`) is part of [QMark Pro](https://silverio-labs.com/qmark).
 
 ## Checking your quiz file
 
@@ -39,8 +40,12 @@ Errors stop `compile`. Warnings (unknown keys, duplicate questions, image hosts 
 
 Commands: `qmark compile <path>` and `qmark lint <path> [--format text|json]`. `lint` exits 1 on errors and 0 when there are only warnings; `--format json` is meant for editors and CI.
 
-Compile flags: `--pdf`, `--html`, `-o` / `--output`, `--pptx`, `--tier free|pro|enterprise`, `-h`.
+Compile flags: `--pdf`, `--html`, `--svg`, `-o` / `--output`, `--pptx`, `--tier free|pro|enterprise`, `-h`.
 
-The command reads `qmark-compose.yml` and `*.qmc.yml` / `*.qmc.yaml` only. Other files in the folder are skipped.
+The command reads `*.qmc.yml` / `*.qmc.yaml` and optional `qmark-compose.yml` only. Other files in the folder are skipped.
 
 Source, changelog, and sample quizzes: [github.com/silveriolabs/qmark](https://github.com/silveriolabs/qmark). Product and support: [silverio-labs.com/qmark](https://silverio-labs.com/qmark).
+
+## License
+
+QMark License (`LicenseRef-QMark`). Free to use, including commercially, and to share unmodified. Modifying or building derivative works is not allowed. Pro and Enterprise features need a subscription from [silverio-labs.com/qmark](https://silverio-labs.com/qmark). Full terms are in the `LICENSE` file shipped with this package.
