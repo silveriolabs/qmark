@@ -39,4 +39,4 @@ for (const d of diagnostics) {
 
 PDF and HTML export, and parsing, are free. PowerPoint, animations, branded themes, timers, and collaboration are on [QMark Pro](https://silverio-labs.com/qmark).
 
-Sample modules and the full compose spec live in the [qmark repository](https://github.com/silveriolabs/qmark) (`_docs/`).
+Sample modules and the full compose spec live in the [qmark repository](https://github.com/silveriolabs/qmark) (`_quiz_samples/`).

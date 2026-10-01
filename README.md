@@ -24,7 +24,7 @@ Use one of these names. QMark looks for them and ignores other files in the fold
 
 You can keep a main file and extra parts in the same folder. QMark reads `qmark-compose.yml` first, then every `*.qmc.yml` file in alphabetical order, and builds one quiz.
 
-Worked examples in this repo: [`_docs/qmark-compose.yml`](_docs/qmark-compose.yml) and [`_docs/1-science-quiz.qmc.yml`](_docs/1-science-quiz.qmc.yml). Writing rules: [`_docs/ROADMAP.md`](_docs/ROADMAP.md).
+Worked examples in this repo: [`_quiz_samples/qmark-compose.yml`](_quiz_samples/qmark-compose.yml), [`_quiz_samples/1-medical-quiz.qmc.yml`](_quiz_samples/1-medical-quiz.qmc.yml), and [`_quiz_samples/2-science-quiz.qmc.yml`](_quiz_samples/2-science-quiz.qmc.yml). Writing rules: [`_quiz_samples/ROADMAP.md`](_quiz_samples/ROADMAP.md).
 
 Each file needs a title (`name`), a version, and at least one section of questions. Question types you can use: multiple choice, select-all-that-apply, true/false, fill in the blank, short answer, matching, and put-in-order. Photos are optional.
 
@@ -35,7 +35,7 @@ Install the command-line tool, then point it at a file or a folder:
 ```bash
 npm install -g @silverio-labs/qmark-cli@latest
 qmark compile ./qmark-compose.yml --pdf
-qmark compile ./1-science-quiz.qmc.yml --html
+qmark compile ./2-science-quiz.qmc.yml --html
 qmark compile ./my-quiz-folder --pdf
 ```
 
@@ -87,7 +87,7 @@ pnpm build
 
 ```text
 qmark/
-├── _docs/          # writing rules and example quizzes
+├── _quiz_samples/  # writing rules and example quizzes
 ├── packages/core/  # @silverio-labs/qmark-core
 ├── packages/cli/   # @silverio-labs/qmark-cli
 └── apps/           # playground and editor preview (planned)
