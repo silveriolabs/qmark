@@ -21,6 +21,8 @@ export { parseComposeYaml } from './parse/parse-yaml';
 export { parseQuizFromYaml } from './parse/quiz-from-yaml';
 
 export { formatAnswerLines } from './export/format-answer';
+export { iterateDeckFrames } from './export/deck-sequence';
+export type { DeckFrame } from './export/deck-sequence';
 export { renderHtmlSlideDeck } from './export/html-slides';
 export type { RenderHtmlSlideDeckOptions } from './export/html-slides';
 export { renderSvgSlideDeck } from './export/svg-slides';
