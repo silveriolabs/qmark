@@ -16,6 +16,7 @@ npm install -g @silverio-labs/qmark-cli@latest
 qmark lint ./my-quiz-folder
 qmark compile ./2-science-quiz.qmc.yml --html
 qmark compile ./my-quiz-folder --pdf
+qmark compile ./my-quiz-folder --svg
 qmark compile ./qmark-compose.yml --pdf
 ```
 
@@ -39,7 +40,7 @@ Errors stop `compile`. Warnings (unknown keys, duplicate questions, image hosts 
 
 Commands: `qmark compile <path>` and `qmark lint <path> [--format text|json]`. `lint` exits 1 on errors and 0 when there are only warnings; `--format json` is meant for editors and CI.
 
-Compile flags: `--pdf`, `--html`, `-o` / `--output`, `--pptx`, `--tier free|pro|enterprise`, `-h`.
+Compile flags: `--pdf`, `--html`, `--svg`, `-o` / `--output`, `--pptx`, `--tier free|pro|enterprise`, `-h`.
 
 The command reads `*.qmc.yml` / `*.qmc.yaml` and optional `qmark-compose.yml` only. Other files in the folder are skipped.
 

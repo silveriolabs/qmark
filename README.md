@@ -41,11 +41,16 @@ PDF and HTML are free. The file lands in a `qmark-out` folder next to where you 
 
 | What you can do | Free | Pro |
 |-----------------|------|-----|
-| Write quizzes locally and export PDF or HTML | Yes | Yes |
-| Build your own web quiz from the parsed quiz | Yes | Yes |
-| Export attribution (“Made with ♥ by silverio-labs”) on PDF/HTML | Shown | Removed |
-| Editable PowerPoint, animations, branded themes, timers | | Yes |
-| Shared cloud editing, uploads, private hosting | | Yes |
+| YAML parse, lint, compile to AST | Yes | Yes |
+| HTML slides (`--html`) and PDF (`--pdf`) | Yes | Yes |
+| SVG slides (`--svg`) | Yes | Yes |
+| PNG export (CLI) | Planned | Planned |
+| Export attribution (“Made with ♥ by silverio-labs”) on exports | Shown | Removed (`--tier pro`) |
+| Editable PPTX (`--pptx`) | No | Licensed (not shipped yet) |
+| Animations, branded themes, timers, collaboration | No | Pro roadmap |
+| Cloud uploads, confidentiality | No | Enterprise options |
+
+Pro features are gated with `requireFeature`; some Pro ids (for example PPTX) are licensed but not implemented in the CLI yet.
 
 ## For developers
 
@@ -53,7 +58,7 @@ PDF and HTML are free. The file lands in a `qmark-out` folder next to where you 
 
 ```text
 <quiz-name>.qmc.yml (primary) and optional qmark-compose.yml
-  → validate → QuizAst → web UI | --pdf | --html | --pptx (Pro)
+  → validate → QuizAst → web UI | --pdf | --html | --svg | --pptx (Pro)
 ```
 
 ```bash
@@ -71,10 +76,11 @@ const ast = parseQuizFromYaml(yamlString);
 | `parseQuizFromYaml(yaml)` | One YAML string → `QuizAst` |
 | `compileComposeDirectory(files)` | `{ path, content }[]` using the same merge rules as the CLI |
 | `renderHtmlSlideDeck(ast, { tier })` | Static HTML slides; free tier includes attribution |
+| `renderSvgSlideDeck(ast, { tier })` | Static SVG slides; same tier attribution rules |
 | `shouldWatermarkExport(tier)` | Whether exports include the free-tier attribution |
 | `requireFeature(tier, feature)` | Throws when a Pro feature is used on the free tier |
 
-CLI flags: `--pdf`, `--html`, `-o` / `--output`, `--pptx` (Pro), `--tier free|pro|enterprise`, `-h`.
+CLI flags: `--pdf`, `--html`, `--svg`, `-o` / `--output`, `--pptx` (Pro), `--tier free|pro|enterprise`, `-h`. Use `qmark lint` before compile in CI.
 
 From this repo:
 

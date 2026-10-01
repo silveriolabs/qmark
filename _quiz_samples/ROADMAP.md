@@ -1,3 +1,15 @@
+## Product phases (vision vs shipped)
+
+| Phase | Focus | Status in this repo |
+|-------|--------|---------------------|
+| **1 — Authoring & static export** | Canonical YAML, lint, compile to AST, CLI `--html` / `--pdf` / `--svg`, tier attribution on free exports | **Shipped** (`@silverio-labs/qmark-core`, `@silverio-labs/qmark-cli`) |
+| **2 — Interactive runtime** | Self-grading HTML5 in the browser, Canvas/SVG/PNG **live** rendering, instant feedback | **Planned** (static slides + answer key today, not interactive grading) |
+| **3 — QMark Pro services** | PPTX, themes, timers, collaboration, cloud uploads, enterprise compliance | **Partially gated** (`requireFeature` + `TIER_MATRIX`; PPTX and most Pro rows not implemented yet) |
+
+Marketing copy on [silverio-labs.com/qmark](https://silverio-labs.com/qmark) describes the full vision; use the table above to see what the open-source CLI and core library do today.
+
+---
+
 Phase 1: Core Engine & Syntax (Steps 1–3)
 1. Define the Canonical YAML Schema
 
