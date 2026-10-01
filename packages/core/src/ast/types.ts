@@ -8,6 +8,8 @@ export type QuestionType =
   | 'ordering';
 
 export type PhotoAnchor =
+  | 'left'
+  | 'right'
   | 'top-left'
   | 'top-right'
   | 'bottom-left'

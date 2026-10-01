@@ -28,4 +28,9 @@ export class ComposeResolutionError extends QMarkError {
 export interface ComposeIssue {
   path: string;
   message: string;
+  /** 1-based source line, when known. */
+  line?: number;
+  /** 1-based source column, when known. */
+  column?: number;
+  hint?: string;
 }

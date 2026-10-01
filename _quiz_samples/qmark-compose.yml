@@ -9,7 +9,7 @@ sections:
     questions:
       - question: What is the capital of France?
         answer: Paris
-        photo: https://example.com/france.jpg
+        photo: https://t4.ftcdn.net/jpg/00/62/18/79/360_F_62187902_w50dxLCzgZjysgW54s8l2lExRVrelETY.jpg
         photo_anchor: top-left
         theme: France
         difficulty: easy
@@ -35,7 +35,7 @@ sections:
     questions:
       - question: Berlin is the capital of Germany.
         answer: true
-        photo: https://example.com/germany.jpg
+        photo: https://images.unsplash.com/photo-1663493955721-110e7e1ae36c?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z2VybWFuJTIwZmxhZ3xlbnwwfHwwfHx8MA%3D%3D
         photo_anchor: top-left
         theme: Germany
         difficulty: easy
@@ -55,7 +55,7 @@ sections:
         answer:
           - Rome
           - Milan
-        photo: https://example.com/italy.jpg
+        photo: https://img.magnific.com/free-psd/isolated-italy-flag-design_23-2151868272.jpg?semt=ais_hybrid&w=740&q=80
         photo_anchor: top-left
         theme: Italy
         difficulty: easy
@@ -83,7 +83,7 @@ sections:
     questions:
       - question: The capital of Italy is ____.
         answer: Rome
-        photo: https://example.com/italy.jpg
+        photo: https://img.magnific.com/free-psd/isolated-italy-flag-design_23-2151868272.jpg?semt=ais_hybrid&w=740&q=80
         photo_anchor: top-left
         theme: Italy
         difficulty: easy
@@ -101,7 +101,7 @@ sections:
     questions:
       - question: What is the capital of Spain?
         answer: Madrid
-        photo: https://example.com/spain.jpg
+        photo: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkp1kp0nOaEWhOROHQYrnIpUssyNtqu0MHiZxK1W6lWCb7jhqA_YBH2iY&s=10
         photo_anchor: top-left
         theme: Spain
         difficulty: easy
@@ -122,8 +122,6 @@ sections:
           France: Paris
           Germany: Berlin
           Italy: Rome
-        photo: https://example.com/europe.jpg
-        photo_anchor: top-left
         theme: Europe
         difficulty: medium
         type: matching
@@ -162,8 +160,6 @@ sections:
           - Lisbon
           - Paris
           - Berlin
-        photo: https://example.com/europe.jpg
-        photo_anchor: top-left
         theme: Europe
         difficulty: medium
         type: ordering
