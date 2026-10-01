@@ -15,7 +15,7 @@ We recommend bookmarking both: the site for releases and licensing, the repo for
 npm install -g @silverio-labs/qmark-cli@latest
 qmark lint ./my-quiz-folder
 qmark compile ./qmark-compose.yml --pdf
-qmark compile ./1-science-quiz.qmc.yml --html
+qmark compile ./2-science-quiz.qmc.yml --html
 qmark compile ./my-quiz-folder --pdf
 ```
 
@@ -26,7 +26,7 @@ PDF and HTML are free. The result is written to `qmark-out` unless you pass `-o`
 `qmark lint` checks a file or folder and tells you the exact line to fix:
 
 ```
-_docs/1-medical-quiz.qmc.yml:22:23 error invalid-enum sections.0.questions.0.photo_anchor
+_quiz_samples/1-medical-quiz.qmc.yml:22:23 error invalid-enum sections.0.questions.0.photo_anchor
   invalid photo_anchor "sideways"
   22 |         photo_anchor: sideways
      |                       ^^^^^^^^
