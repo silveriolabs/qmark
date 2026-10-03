@@ -11,8 +11,8 @@ const header = `version: "1.0.0"
 name: Lint fixture
 sections:
   - sectionType: S
-    instructions: I
     goal: G
+    instructions: I
     questions:
 `;
 

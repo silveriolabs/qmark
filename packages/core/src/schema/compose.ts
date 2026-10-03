@@ -190,8 +190,8 @@ export const questionSchema = z
 
 export const sectionSchema = z.object({
   sectionType: z.string().min(1),
-  instructions: z.string().min(1),
   goal: z.string().min(1),
+  instructions: z.string().min(1),
   questions: z.array(questionSchema).min(1),
 });
 

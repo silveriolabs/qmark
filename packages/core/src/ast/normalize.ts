@@ -91,8 +91,8 @@ function normalizeSection(
   return {
     id,
     sectionType: section.sectionType,
-    instructions: section.instructions,
     goal: section.goal,
+    instructions: section.instructions,
     ...(options.source !== undefined ? { source: options.source } : {}),
     questions: section.questions.map((q, qi) => normalizeQuestion(q, id, qi)),
   };

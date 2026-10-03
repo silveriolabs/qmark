@@ -29,8 +29,8 @@ export interface QuizAst {
 export interface SectionAst {
   id: string;
   sectionType: string;
-  instructions: string;
   goal: string;
+  instructions: string;
   questions: QuestionAst[];
   /** Source filename when merged from a directory of modules. */
   source?: string;

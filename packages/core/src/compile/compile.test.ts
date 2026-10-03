@@ -35,8 +35,8 @@ const moduleA = `version: 1.0.0
 name: Module A
 sections:
   - sectionType: Warmup
-    instructions: Pick one.
     goal: Basics
+    instructions: Pick one.
     questions:
       - question: Two plus two?
         type: multiple-choice
@@ -48,8 +48,8 @@ const moduleB = `version: 1.0.0
 name: Module B
 sections:
   - sectionType: Review
-    instructions: True or false.
     goal: Check
+    instructions: True or false.
     questions:
       - question: The sky is blue.
         type: boolean

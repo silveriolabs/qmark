@@ -5,8 +5,8 @@ version: "1.0.0"
 name: Simple Science Quiz
 sections:
   - sectionType: Multiple choice
-    instructions: Select the correct answer.
     goal: Sample multiple-choice (one correct option).
+    instructions: Select the correct answer.
     questions:
       - question: What planet is known as the Red Planet?
         type: multiple-choice
@@ -21,8 +21,8 @@ sections:
         photo_anchor: center
 
   - sectionType: Multiple select
-    instructions: Select all correct answers.
     goal: Sample multiple-select (answer is a list).
+    instructions: Select all correct answers.
     questions:
       - question: Which of these are noble gases?
         type: multiple-select
@@ -38,8 +38,8 @@ sections:
           - Neon
 
   - sectionType: Boolean
-    instructions: True or false for each statement.
     goal: Sample boolean (no options).
+    instructions: True or false for each statement.
     questions:
       - question: Water freezes at 0 degrees Celsius.
         type: boolean
@@ -48,8 +48,8 @@ sections:
         answer: true
 
   - sectionType: Fill in the blank
-    instructions: Fill in the blank (use ____ in the stem).
     goal: Sample fill-blank.
+    instructions: Fill in the blank (use ____ in the stem).
     questions:
       - question: The chemical symbol for gold is ____.
         type: fill-blank
@@ -60,8 +60,8 @@ sections:
         photo_anchor: center
 
   - sectionType: Short answer
-    instructions: Type the correct answer.
     goal: Sample short-answer (string or list of acceptable strings).
+    instructions: Type the correct answer.
     questions:
       - question: What gas do plants absorb during photosynthesis?
         type: short-answer
@@ -72,8 +72,8 @@ sections:
           - CO2
 
   - sectionType: Matching
-    instructions: Match each item on the left to the right.
     goal: Sample matching (left/right same length; answer is a map).
+    instructions: Match each item on the left to the right.
     questions:
       - question: Match each planet to its order from the Sun.
         type: matching
@@ -93,8 +93,8 @@ sections:
           Mars: 4th
 
   - sectionType: Ordering
-    instructions: Put the items in the correct order.
     goal: Sample ordering (options shuffled; answer is correct sequence).
+    instructions: Put the items in the correct order.
     questions:
       - question: Order the states of matter from lowest to highest typical thermal energy.
         type: ordering

@@ -4,8 +4,8 @@ name: Quiz 1
 # photo and photo_anchor are optional
 sections:
   - sectionType: Multiple choice
-    instructions: Select the correct answer from the options provided.
     goal: Test knowledge of European capital cities.
+    instructions: Select the correct answer from the options provided.
     questions:
       - question: What is the capital of France?
         answer: Paris
@@ -30,8 +30,8 @@ sections:
           - Naples
 
   - sectionType: Boolean
-    instructions: Decide whether each statement is true or false.
     goal: Test knowledge of European capital cities.
+    instructions: Decide whether each statement is true or false.
     questions:
       - question: Berlin is the capital of Germany.
         answer: true
@@ -48,8 +48,8 @@ sections:
         type: boolean
 
   - sectionType: Multiple select
-    instructions: Select all correct answers from the options provided.
     goal: Test knowledge of cities in Italy and Spain.
+    instructions: Select all correct answers from the options provided.
     questions:
       - question: Which cities are in Italy?
         answer:
@@ -78,8 +78,8 @@ sections:
           - Lisbon
 
   - sectionType: Fill in the blank
-    instructions: Fill in the blank with the correct word.
     goal: Test recall of European capital cities.
+    instructions: Fill in the blank with the correct word.
     questions:
       - question: The capital of Italy is ____.
         answer: Rome
@@ -96,8 +96,8 @@ sections:
         type: fill-blank
 
   - sectionType: Short answer
-    instructions: Type the correct answer.
     goal: Test recall of European capital cities.
+    instructions: Type the correct answer.
     questions:
       - question: What is the capital of Spain?
         answer: Madrid
@@ -114,8 +114,8 @@ sections:
         type: short-answer
 
   - sectionType: Matching
-    instructions: Match each country to its capital.
     goal: Test pairing of countries and capital cities.
+    instructions: Match each country to its capital.
     questions:
       - question: Match each country to its capital.
         answer:
@@ -152,8 +152,8 @@ sections:
           - Athens
 
   - sectionType: Ordering
-    instructions: Put the items in the correct order.
     goal: Test geographic order of European capital cities.
+    instructions: Put the items in the correct order.
     questions:
       - question: Order these capitals from west to east.
         answer:

@@ -5,8 +5,8 @@ version: "1.0.0"
 name: Simple Medical Quiz
 sections:
   - sectionType: Multiple choice
-    instructions: Select the correct answer.
     goal: Sample multiple-choice (one correct option).
+    instructions: Select the correct answer.
     questions:
       - question: Which heart chamber pumps deoxygenated blood to the lungs?
         type: multiple-choice
@@ -22,8 +22,8 @@ sections:
         photo_anchor: right
 
   - sectionType: Multiple select
-    instructions: Select all correct answers.
     goal: Sample multiple-select (answer is a list).
+    instructions: Select all correct answers.
     questions:
       - question: Which of the following are classic symptoms of acute myocardial infarction?
         type: multiple-select
@@ -40,8 +40,8 @@ sections:
           - Diaphoresis
 
   - sectionType: Boolean
-    instructions: True or false for each statement.
     goal: Sample boolean (no options).
+    instructions: True or false for each statement.
     questions:
       - question: In most healthy adults, a resting heart rate of 60–100 beats per minute is considered normal.
         type: boolean
@@ -50,8 +50,8 @@ sections:
         answer: true
 
   - sectionType: Fill in the blank
-    instructions: Fill in the blank (use ____ in the stem).
     goal: Sample fill-blank.
+    instructions: Fill in the blank (use ____ in the stem).
     questions:
       - question: The hormone ____ lowers blood glucose by promoting uptake into cells.
         type: fill-blank
@@ -62,8 +62,8 @@ sections:
         photo_anchor: center
 
   - sectionType: Short answer
-    instructions: Type the correct answer.
     goal: Sample short-answer (string or list of acceptable strings).
+    instructions: Type the correct answer.
     questions:
       - question: What is the medical term for persistently elevated arterial blood pressure?
         type: short-answer
@@ -74,8 +74,8 @@ sections:
           - high blood pressure
 
   - sectionType: Matching
-    instructions: Match each item on the left to the right.
     goal: Sample matching (left/right same length; answer is a map).
+    instructions: Match each item on the left to the right.
     questions:
       - question: Match each organ to its primary physiological role.
         type: matching
@@ -95,8 +95,8 @@ sections:
           Kidneys: Filter blood and regulate fluid balance
 
   - sectionType: Ordering
-    instructions: Put the items in the correct order.
     goal: Sample ordering (options shuffled; answer is correct sequence).
+    instructions: Put the items in the correct order.
     questions:
       - question: Order the phases of wound healing from earliest to latest.
         type: ordering
