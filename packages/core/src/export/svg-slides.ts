@@ -134,6 +134,31 @@ function renderSlide(
   return `<g>${parts.join('\n')}</g>`;
 }
 
+function renderTitleSlide(y0: number, quiz: QuizAst, showWatermark: boolean): string {
+  const contentW = SLIDE_W - MARGIN * 2;
+  const parts: string[] = [slideBackground(y0)];
+  const nameLines = wrapText(quiz.name, contentW, 32);
+  let y = y0 + SLIDE_H / 2 - (nameLines.length * 38) / 2;
+  for (const line of nameLines) {
+    parts.push(
+      `<text x="${SLIDE_W / 2}" y="${y}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="32" font-weight="700" fill="#0f172a">${escapeXml(line)}</text>`,
+    );
+    y += 38;
+  }
+  parts.push(
+    `<text x="${SLIDE_W / 2}" y="${y + 8}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" fill="#64748b">${escapeXml(`Version ${quiz.version}`)}</text>`,
+  );
+
+  if (showWatermark) {
+    const wy = y0 + SLIDE_H - MARGIN;
+    parts.push(
+      `<text x="${SLIDE_W / 2}" y="${wy}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">${escapeXml(WATERMARK_TEXT)}</text>`,
+    );
+  }
+
+  return `<g>${parts.join('\n')}</g>`;
+}
+
 function renderSectionIntroSlide(
   y0: number,
   section: SectionAst,
@@ -148,18 +173,18 @@ function renderSectionIntroSlide(
   );
   y += LINE + 8;
 
-  parts.push(textBlock(MARGIN, y, ['Instructions'], 14, '#0f172a', '600'));
-  y += 20;
-  for (const line of wrapText(section.instructions, contentW, 16)) {
-    parts.push(textBlock(MARGIN, y, [line], 16, '#334155'));
-    y += 22;
-  }
-  y += 12;
-
   parts.push(textBlock(MARGIN, y, ['Goal'], 14, '#0f172a', '600'));
   y += 20;
   for (const line of wrapText(section.goal, contentW, 16)) {
     parts.push(textBlock(MARGIN, y, [line], 16, '#64748b'));
+    y += 22;
+  }
+  y += 12;
+
+  parts.push(textBlock(MARGIN, y, ['Instructions'], 14, '#0f172a', '600'));
+  y += 20;
+  for (const line of wrapText(section.instructions, contentW, 16)) {
+    parts.push(textBlock(MARGIN, y, [line], 16, '#334155'));
     y += 22;
   }
 
@@ -188,6 +213,9 @@ export function renderSvgSlideDeck(
   for (const frame of iterateDeckFrames(ast)) {
     const y0 = slideIndex * SLIDE_H;
     switch (frame.kind) {
+      case 'title':
+        groups.push(renderTitleSlide(y0, frame.quiz, showWatermark));
+        break;
       case 'section-intro':
         groups.push(renderSectionIntroSlide(y0, frame.section, showWatermark));
         break;
