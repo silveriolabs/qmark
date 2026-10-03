@@ -101,11 +101,10 @@ function photoFor(question: QuestionAst, photos: Map<string, Buffer>): Buffer | 
 function addSectionIntroPage(doc: PDFKit.PDFDocument, section: SectionAst): void {
   doc.addPage();
   doc.fontSize(10).fillColor('#666').text(section.sectionType.toUpperCase());
-  doc.fillColor('#000').moveDown(0.75).fontSize(14).text('Instructions');
-  doc.moveDown(0.25).fontSize(16).text(section.instructions);
-  doc.moveDown().fontSize(14).text('Goal');
+  doc.fillColor('#000').moveDown(0.75).fontSize(14).text('Goal');
   doc.moveDown(0.25).fontSize(16).fillColor('#444').text(section.goal);
-  doc.fillColor('#000');
+  doc.fillColor('#000').moveDown().fontSize(14).text('Instructions');
+  doc.moveDown(0.25).fontSize(16).text(section.instructions);
 }
 
 export interface WriteQuizPdfOptions {
@@ -127,14 +126,15 @@ export async function writeQuizPdf(
       applyPdfWatermark(doc);
     }
 
-    doc.addPage().fontSize(32).text(ast.name, { align: 'center' });
-    doc.moveDown().fontSize(16).fillColor('#555').text(`Version ${ast.version}`, {
-      align: 'center',
-    });
-    doc.fillColor('#000');
-
     for (const frame of iterateDeckFrames(ast)) {
       switch (frame.kind) {
+        case 'title':
+          doc.addPage().fontSize(32).text(frame.quiz.name, { align: 'center' });
+          doc.moveDown().fontSize(16).fillColor('#555').text(`Version ${frame.quiz.version}`, {
+            align: 'center',
+          });
+          doc.fillColor('#000');
+          break;
         case 'section-intro':
           addSectionIntroPage(doc, frame.section);
           break;

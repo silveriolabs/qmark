@@ -22,6 +22,17 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;');
 }
 
+function titleSlide(quiz: QuizAst, showWatermark: boolean): string {
+  const stamp = showWatermark ? watermarkHtml() : '';
+  return `<section class="slide slide-title">
+  <div class="content">
+  <h1>${escapeHtml(quiz.name)}</h1>
+  <p class="meta">Version ${escapeHtml(quiz.version)}</p>
+  </div>
+  ${stamp}
+</section>`;
+}
+
 function sectionIntroSlide(section: SectionAst, showWatermark: boolean): string {
   const stamp = showWatermark ? watermarkHtml() : '';
   const title = escapeHtml(section.sectionType);
@@ -31,10 +42,10 @@ function sectionIntroSlide(section: SectionAst, showWatermark: boolean): string 
   return `<section class="slide slide-section-intro" data-section-id="${escapeHtml(section.id)}">
   <div class="content">
   <p class="kicker">${title}</p>
-  <h3 class="intro-heading">Instructions</h3>
-  <p class="intro-body">${instructions}</p>
   <h3 class="intro-heading">Goal</h3>
   <p class="intro-body goal">${goal}</p>
+  <h3 class="intro-heading">Instructions</h3>
+  <p class="intro-body">${instructions}</p>
   </div>
   ${stamp}
 </section>`;
@@ -123,6 +134,9 @@ export function renderHtmlSlideDeck(
   const slides: string[] = [];
   for (const frame of iterateDeckFrames(ast)) {
     switch (frame.kind) {
+      case 'title':
+        slides.push(titleSlide(frame.quiz, showWatermark));
+        break;
       case 'section-intro':
         slides.push(sectionIntroSlide(frame.section, showWatermark));
         break;
@@ -168,6 +182,8 @@ export function renderHtmlSlideDeck(
     }
     .kicker { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; color: #94a3b8; margin: 0 0 0.5rem; }
     h2 { font-size: clamp(1.5rem, 4vw, 2.75rem); line-height: 1.2; margin: 0 0 1rem; max-width: 40ch; }
+    .slide-title { align-items: center; text-align: center; }
+    .slide-title h1 { font-size: clamp(2rem, 6vw, 4rem); line-height: 1.1; margin: 0 0 1rem; }
     .slide-section-intro .content { max-width: 48ch; }
     .intro-heading { font-size: 1.1rem; font-weight: 600; margin: 1.25rem 0 0.35rem; color: #e2e8f0; }
     .intro-heading:first-of-type { margin-top: 0.75rem; }

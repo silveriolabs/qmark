@@ -86,12 +86,14 @@ assert.equal(paidBlocked, true);
 
 const deckFixture = compileComposeYaml(moduleA, { source: 'deck-fixture.qmc.yml' });
 const deckKinds = [...iterateDeckFrames(deckFixture)].map((f) => f.kind);
-assert.deepEqual(deckKinds, ['section-intro', 'question', 'answer']);
+assert.deepEqual(deckKinds, ['title', 'section-intro', 'question', 'answer']);
 
 const freeHtml = renderHtmlSlideDeck(ast, { tier: 'free' });
 assert.ok(freeHtml.includes(WATERMARK.before));
 assert.ok(freeHtml.includes('slide-section-intro'));
 assert.ok(freeHtml.includes('Select the correct answer from the options provided.'));
+assert.ok(freeHtml.indexOf('>Goal<') < freeHtml.indexOf('>Instructions<'));
+assert.ok(freeHtml.indexOf('slide-title') < freeHtml.indexOf('slide-section-intro'));
 assert.ok(freeHtml.indexOf('slide-section-intro') < freeHtml.indexOf('data-question-id="s-1-q1"'));
 const proHtml = renderHtmlSlideDeck(ast, { tier: 'pro' });
 assert.ok(!proHtml.includes('class="watermark"'));
