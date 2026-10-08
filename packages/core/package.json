@@ -1,6 +1,6 @@
 {
   "name": "@silverio-labs/qmark-core",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "TypeScript quiz and assessment library for education and e-learning: YAML parser and renderer for presentations, Canvas/SVG, and HTML slide decks",
   "keywords": [
     "quiz",
