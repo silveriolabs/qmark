@@ -37,7 +37,7 @@ for (const d of diagnostics) {
 
 `parseQuizFromYaml` accepts one file’s text (typically a `<quiz-name>.qmc.yml` module). `compileComposeDirectory` accepts the same set of files the CLI would load from a folder. `renderHtmlSlideDeck(ast, { tier })` and `renderSvgSlideDeck(ast, { tier })` return static exports (free tier includes attribution). `shouldWatermarkExport` and `requireFeature` enforce tier rules.
 
-PDF and HTML export, and parsing, are free. PowerPoint, animations, branded themes, timers, and collaboration are on [QMark Pro](https://silverio-labs.com/qmark).
+PDF, HTML, and SVG export, and parsing, are free. PowerPoint, animations, branded themes, timers, and collaboration are on [QMark Pro](https://silverio-labs.com/qmark).
 
 Sample modules and the full compose spec live in the [qmark repository](https://github.com/silveriolabs/qmark) (`_quiz_samples/`).
 

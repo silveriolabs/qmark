@@ -37,7 +37,7 @@ qmark compile ./my-quiz-folder --pdf
 qmark compile ./qmark-compose.yml --pdf   # optional single-file name
 ```
 
-PDF and HTML are free. The file lands in a `qmark-out` folder next to where you ran the command. Editable PowerPoint and other Pro features are on [silverio-labs.com/qmark](https://silverio-labs.com/qmark).
+PDF, HTML, and SVG are free. The file lands in a `qmark-out` folder next to where you ran the command. Editable PowerPoint and other Pro features are on [silverio-labs.com/qmark](https://silverio-labs.com/qmark).
 
 | What you can do | Free | Pro |
 |-----------------|------|-----|
@@ -54,7 +54,7 @@ Pro features are gated with `requireFeature`; some Pro ids (for example PPTX) ar
 
 ## For developers
 
-`@silverio-labs/qmark-core` checks the YAML and returns a quiz object (`QuizAst`). `@silverio-labs/qmark-cli` reads a file or directory from disk and writes PDF or HTML.
+`@silverio-labs/qmark-core` checks the YAML and returns a quiz object (`QuizAst`). `@silverio-labs/qmark-cli` reads a file or directory from disk and writes PDF, HTML, or SVG.
 
 ```text
 <quiz-name>.qmc.yml (primary) and optional qmark-compose.yml

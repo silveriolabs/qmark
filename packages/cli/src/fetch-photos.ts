@@ -32,6 +32,12 @@ async function fetchPhoto(url: string): Promise<Buffer> {
   return buf;
 }
 
+/** Data URI for an already-downloaded PNG or JPEG (SVG `<image href>`). */
+export function photoDataUri(buf: Buffer): string {
+  const mime = isPng(buf) ? 'image/png' : 'image/jpeg';
+  return `data:${mime};base64,${buf.toString('base64')}`;
+}
+
 /**
  * Downloads every publicly reachable question photo. Photos that fail are
  * reported via `onWarning` and omitted, so the PDF still renders.

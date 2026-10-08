@@ -11,6 +11,7 @@ import {
   type ComposeFileInput,
 } from '@silverio-labs/qmark-core';
 import { writeQuizPdf } from './export-pdf';
+import { photoDataUri, prefetchPhotos } from './fetch-photos';
 import {
   displayPathResolver,
   formatDiagnosticsJson,
@@ -114,11 +115,13 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
   const outDir = join(process.cwd(), 'qmark-out');
   mkdirSync(outDir, { recursive: true });
 
+  const photos = args.pdf || args.svg ? await prefetchPhotos(ast) : undefined;
+
   if (args.pdf) {
     requireFeature(args.tier, 'pdf-export');
     const out = args.output ?? join(outDir, `${slugify(ast.name)}.pdf`);
     mkdirSync(dirname(out), { recursive: true });
-    await writeQuizPdf(ast, out, { tier: args.tier });
+    await writeQuizPdf(ast, out, { tier: args.tier, photos });
     console.log(`Wrote ${out}`);
   }
 
@@ -138,7 +141,11 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
         ? args.output
         : join(outDir, `${slugify(ast.name)}.svg`);
     mkdirSync(dirname(out), { recursive: true });
-    writeFileSync(out, renderSvgSlideDeck(ast, { tier: args.tier }), 'utf8');
+    const svgPhotos = new Map<string, string>();
+    for (const [url, buf] of photos ?? []) {
+      svgPhotos.set(url, photoDataUri(buf));
+    }
+    writeFileSync(out, renderSvgSlideDeck(ast, { tier: args.tier, photos: svgPhotos }), 'utf8');
     console.log(`Wrote ${out}`);
   }
 
