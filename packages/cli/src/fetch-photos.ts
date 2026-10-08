@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { crc32 } from 'node:zlib';
 import { isLocalPhotoPath, photoLookupKey, resolvePhotoUrl, type QuizAst } from '@silverio-labs/qmark-core';
 
 const FETCH_TIMEOUT_MS = 15_000;
@@ -14,11 +15,20 @@ function isJpeg(buf: Buffer): boolean {
   return buf.length > 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
 }
 
-/** AVIF is an ISO BMFF file whose major brand is `avif` or `avis`. */
+/**
+ * AVIF is an ISO BMFF file. The major brand is often `avif`/`avis`, but many
+ * files use `mif1`/`msf1` and list `avif` or `avis` as a compatible brand.
+ */
 function isAvif(buf: Buffer): boolean {
   if (buf.length < 12 || buf.toString('ascii', 4, 8) !== 'ftyp') return false;
-  const brand = buf.toString('ascii', 8, 12);
-  return brand === 'avif' || brand === 'avis';
+  const boxSize = buf.readUInt32BE(0);
+  const end = boxSize > 12 && boxSize <= buf.length ? boxSize : Math.min(buf.length, 64);
+  for (let offset = 8; offset + 4 <= end; offset += 4) {
+    if (offset === 12) continue;
+    const brand = buf.toString('ascii', offset, offset + 4);
+    if (brand === 'avif' || brand === 'avis') return true;
+  }
+  return false;
 }
 
 /** WebP is a RIFF container whose form type is `WEBP`. */
@@ -36,11 +46,57 @@ const UNSUPPORTED = 'unsupported format (use PNG, JPG, JPEG, WEBP, or AVIF)';
  * PNG and JPEG pass through. WebP and AVIF are decoded to PNG so PDFKit can embed them;
  * HTML and SVG then use that PNG as well.
  */
+function pngChunk(type: string, data: Buffer): Buffer {
+  const length = Buffer.alloc(4);
+  length.writeUInt32BE(data.length);
+  const typeBuf = Buffer.from(type);
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(Buffer.concat([typeBuf, data])));
+  return Buffer.concat([length, typeBuf, data, crc]);
+}
+
+/**
+ * PDFKit's PNG reader only consumes the first IDAT chunk. Sharp splits the
+ * image across several, which truncates AVIF and WebP conversions in PDF.
+ */
+function coalescePngIdat(png: Buffer): Buffer {
+  if (!isPng(png)) return png;
+  const chunks: { type: string; data: Buffer }[] = [];
+  let pos = 8;
+  while (pos + 8 <= png.length) {
+    const length = png.readUInt32BE(pos);
+    const type = png.toString('ascii', pos + 4, pos + 8);
+    const data = png.subarray(pos + 8, pos + 8 + length);
+    chunks.push({ type, data: Buffer.from(data) });
+    pos += 12 + length;
+    if (type === 'IEND') break;
+  }
+  const idatCount = chunks.filter((chunk) => chunk.type === 'IDAT').length;
+  if (idatCount <= 1) return png;
+  const merged = Buffer.concat(
+    chunks.filter((chunk) => chunk.type === 'IDAT').map((chunk) => chunk.data),
+  );
+  const out: Buffer[] = [png.subarray(0, 8)];
+  let wroteIdat = false;
+  for (const chunk of chunks) {
+    if (chunk.type === 'IDAT') {
+      if (wroteIdat) continue;
+      wroteIdat = true;
+      out.push(pngChunk('IDAT', merged));
+      continue;
+    }
+    out.push(pngChunk(chunk.type, chunk.data));
+  }
+  return Buffer.concat(out);
+}
+
 async function normalizeImage(buf: Buffer): Promise<Buffer> {
-  if (isPng(buf) || isJpeg(buf)) return buf;
+  if (isPng(buf)) return coalescePngIdat(buf);
+  if (isJpeg(buf)) return buf;
   if (!isAvif(buf) && !isWebp(buf)) throw new Error(UNSUPPORTED);
   const { default: sharp } = await import('sharp');
-  return sharp(buf).png().toBuffer();
+  const png = await sharp(buf).png().toBuffer();
+  return coalescePngIdat(png);
 }
 
 async function fetchPhoto(url: string): Promise<Buffer> {

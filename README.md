@@ -5,6 +5,8 @@
 
 QMark turns a quiz you write in a text file into a printable slide deck or a web quiz you can run in the browser. If you are in **academe**, you can use it for **self-study**: turn your notes, textbook chapters, and slides into practice that feels like review—not busywork.
 
+![QMark demo](qmark-demo.gif)
+
 Start here: [silverio-labs.com/qmark](https://silverio-labs.com/qmark)
 
 ## Who is QMark for?
