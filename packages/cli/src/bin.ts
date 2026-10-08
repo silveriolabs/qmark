@@ -136,9 +136,7 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
     mkdirSync(dirname(out), { recursive: true });
     const htmlPhotos = new Map<string, string>();
     for (const [key, buf] of photos ?? []) {
-      if (!key.startsWith('http://') && !key.startsWith('https://')) {
-        htmlPhotos.set(key, photoDataUri(buf));
-      }
+      htmlPhotos.set(key, photoDataUri(buf));
     }
     writeFileSync(
       out,
