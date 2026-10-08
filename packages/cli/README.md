@@ -20,7 +20,7 @@ qmark compile ./my-quiz-folder --svg
 qmark compile ./qmark-compose.yml --pdf
 ```
 
-PDF and HTML are free (with export attribution on the free tier). The result is written to `qmark-out` unless you pass `-o` with a file path. Pass `--tier pro` for attribution-free exports. Editable PowerPoint (`--pptx`) is part of [QMark Pro](https://silverio-labs.com/qmark).
+PDF, HTML, and SVG are free (with export attribution on the free tier). The result is written to `qmark-out` unless you pass `-o` with a file path. Pass `--tier pro` for attribution-free exports. Editable PowerPoint (`--pptx`) is part of [QMark Pro](https://silverio-labs.com/qmark).
 
 ## Checking your quiz file
 

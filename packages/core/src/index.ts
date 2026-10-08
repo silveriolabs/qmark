@@ -32,7 +32,9 @@ export { WATERMARK, WATERMARK_TEXT, watermarkHtml } from './watermark/watermark'
 
 export {
   DEFAULT_PHOTO_ANCHOR,
+  isLocalPhotoPath,
   isSupportedPhotoUrl,
+  photoLookupKey,
   resolvePhotoUrl,
 } from './photo/resolve-photo-url';
 

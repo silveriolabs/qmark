@@ -4,7 +4,7 @@ import {
   DEFAULT_PHOTO_ANCHOR,
   formatAnswerLines,
   iterateDeckFrames,
-  resolvePhotoUrl,
+  photoLookupKey,
   shouldWatermarkExport,
   type PhotoAnchor,
   type QMarkTier,
@@ -94,8 +94,8 @@ function addQuestionPage(doc: PDFKit.PDFDocument, photo: Buffer | undefined, anc
 }
 
 function photoFor(question: QuestionAst, photos: Map<string, Buffer>): Buffer | undefined {
-  const url = question.photo ? resolvePhotoUrl(question.photo) : undefined;
-  return url ? photos.get(url) : undefined;
+  const key = question.photo ? photoLookupKey(question.photo) : undefined;
+  return key ? photos.get(key) : undefined;
 }
 
 function addSectionIntroPage(doc: PDFKit.PDFDocument, section: SectionAst): void {
@@ -109,6 +109,8 @@ function addSectionIntroPage(doc: PDFKit.PDFDocument, section: SectionAst): void
 
 export interface WriteQuizPdfOptions {
   tier?: QMarkTier;
+  /** Prefetched photos. When omitted, photos are downloaded during export. */
+  photos?: Map<string, Buffer>;
 }
 
 export async function writeQuizPdf(
@@ -117,7 +119,7 @@ export async function writeQuizPdf(
   options: WriteQuizPdfOptions = {},
 ): Promise<void> {
   const tier = options.tier ?? 'free';
-  const photos = await prefetchPhotos(ast);
+  const photos = options.photos ?? (await prefetchPhotos(ast));
   await new Promise<void>((resolve, reject) => {
     const doc = new PDFDocument({ autoFirstPage: false, size: [PAGE.width, PAGE.height], margin: PAGE_MARGIN });
     const stream = createWriteStream(outputPath);

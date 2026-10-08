@@ -84,7 +84,7 @@ export function hintForIssue(issue: ZodIssue): string | undefined {
     return 'add a photo URL or remove photo_anchor';
   }
   if (message.startsWith('photo must be')) {
-    return 'use https://…, http://…, or s3://bucket/key';
+    return 'use https://…, http://…, s3://bucket/key, or a path like ./images/figure.png';
   }
   if (message === 'fill-blank question must contain ____') {
     return 'put four underscores (____) where the blank goes';

@@ -105,4 +105,18 @@ assert.ok(freeSvg.includes('Select the correct answer from the options provided.
 const proSvg = renderSvgSlideDeck(ast, { tier: 'pro' });
 assert.ok(!proSvg.includes(WATERMARK.before));
 
+const photoUrl = 'https://example.com/flag.png';
+const photoAst = structuredClone(deckFixture);
+const photoQuestion = photoAst.sections[0]?.questions[0];
+assert.ok(photoQuestion);
+photoQuestion.photo = photoUrl;
+photoQuestion.photoAnchor = 'left';
+const dataUri = 'data:image/png;base64,iVBORw0KGgo=';
+const svgWithPhoto = renderSvgSlideDeck(photoAst, {
+  tier: 'pro',
+  photos: new Map([[photoUrl, dataUri]]),
+});
+assert.equal(svgWithPhoto.split('<image ').length - 1, 2);
+assert.ok(svgWithPhoto.includes(`href="${dataUri}"`));
+
 console.log('compile tests passed');

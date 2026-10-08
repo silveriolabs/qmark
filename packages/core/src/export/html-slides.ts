@@ -1,5 +1,5 @@
 import type { QuestionAst, QuizAst, SectionAst } from '../ast/types';
-import { DEFAULT_PHOTO_ANCHOR, resolvePhotoUrl } from '../photo/resolve-photo-url';
+import { DEFAULT_PHOTO_ANCHOR, photoLookupKey, resolvePhotoUrl } from '../photo/resolve-photo-url';
 import { shouldWatermarkExport, type QMarkTier } from '../tier/features';
 import { WATERMARK_CSS, watermarkHtml } from '../watermark/watermark';
 import { iterateDeckFrames } from './deck-sequence';
@@ -8,6 +8,11 @@ import { formatAnswerLines } from './format-answer';
 export interface RenderHtmlSlideDeckOptions {
   /** Defaults to `free` (includes export attribution). Pro and Enterprise omit the watermark. */
   tier?: QMarkTier;
+  /**
+   * Prefetched photos keyed by {@link photoLookupKey}.
+   * Values are data URIs. Local paths are shown only when present here.
+   */
+  photos?: ReadonlyMap<string, string>;
 }
 
 /** Hosts without CORS headers reject `crossorigin` loads; retry as a plain image. */
@@ -51,11 +56,19 @@ function sectionIntroSlide(section: SectionAst, showWatermark: boolean): string 
 </section>`;
 }
 
-function photoMarkup(question: QuestionAst): { photo: string; slideClass: string } {
-  const photoUrl = question.photo ? resolvePhotoUrl(question.photo) : undefined;
+function photoMarkup(
+  question: QuestionAst,
+  photos: ReadonlyMap<string, string> | undefined,
+): { photo: string; slideClass: string } {
+  const key = question.photo ? photoLookupKey(question.photo) : undefined;
+  const embedded = key ? photos?.get(key) : undefined;
+  const photoUrl = embedded ?? (question.photo ? resolvePhotoUrl(question.photo) : undefined);
   const anchor = question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR;
+  const remoteAttrs = embedded
+    ? ''
+    : ` crossorigin="anonymous" referrerpolicy="no-referrer" loading="lazy" decoding="async" onerror="${PHOTO_CORS_FALLBACK}"`;
   const photo = photoUrl
-    ? `<figure class="photo"><img src="${escapeHtml(photoUrl)}" alt="" crossorigin="anonymous" referrerpolicy="no-referrer" loading="lazy" decoding="async" onerror="${PHOTO_CORS_FALLBACK}" /></figure>`
+    ? `<figure class="photo"><img src="${escapeHtml(photoUrl)}" alt=""${remoteAttrs} /></figure>`
     : '';
   const slideClass = photoUrl ? `slide has-photo photo-${anchor}` : 'slide';
   return { photo, slideClass };
@@ -65,6 +78,7 @@ function questionSlideHtml(
   section: SectionAst,
   question: QuestionAst,
   showWatermark: boolean,
+  photos: ReadonlyMap<string, string> | undefined,
 ): string {
   const stamp = showWatermark ? watermarkHtml() : '';
   const title = escapeHtml(section.sectionType);
@@ -87,7 +101,7 @@ function questionSlideHtml(
     body = `<ul>${question.options.map((o) => `<li>${escapeHtml(o)}</li>`).join('')}</ul>`;
   }
 
-  const { photo, slideClass } = photoMarkup(question);
+  const { photo, slideClass } = photoMarkup(question, photos);
 
   return `<section class="${slideClass}" data-question-id="${escapeHtml(question.id)}">
   ${photo}
@@ -101,14 +115,18 @@ function questionSlideHtml(
 </section>`;
 }
 
-function answerSlideHtml(question: QuestionAst, showWatermark: boolean): string {
+function answerSlideHtml(
+  question: QuestionAst,
+  showWatermark: boolean,
+  photos: ReadonlyMap<string, string> | undefined,
+): string {
   const stamp = showWatermark ? watermarkHtml() : '';
   const stem = escapeHtml(question.question);
   const answerBody = formatAnswerLines(question)
     .map((line) => `<li>${escapeHtml(line)}</li>`)
     .join('');
 
-  const { photo, slideClass } = photoMarkup(question);
+  const { photo, slideClass } = photoMarkup(question, photos);
 
   return `<section class="${slideClass} slide-answer" data-question-id="${escapeHtml(question.id)}-answer">
   ${photo}
@@ -141,10 +159,10 @@ export function renderHtmlSlideDeck(
         slides.push(sectionIntroSlide(frame.section, showWatermark));
         break;
       case 'question':
-        slides.push(questionSlideHtml(frame.section, frame.question, showWatermark));
+        slides.push(questionSlideHtml(frame.section, frame.question, showWatermark, options.photos));
         break;
       case 'answer':
-        slides.push(answerSlideHtml(frame.question, showWatermark));
+        slides.push(answerSlideHtml(frame.question, showWatermark, options.photos));
         break;
       default: {
         const _exhaustive: never = frame;

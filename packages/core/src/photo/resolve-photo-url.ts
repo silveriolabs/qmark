@@ -44,6 +44,31 @@ export function resolvePhotoUrl(photo: string): string | undefined {
   }
 }
 
+/**
+ * A quiz-file-relative path, an absolute filesystem path, or a `file://` URL.
+ * Remote URLs are not local paths.
+ */
+export function isLocalPhotoPath(photo: string): boolean {
+  const value = photo.trim();
+  if (!value || /[\0\r\n]/.test(value)) return false;
+  if (/^file:/i.test(value)) {
+    try {
+      const url = new URL(value);
+      return url.protocol === 'file:' && url.pathname.length > 1;
+    } catch {
+      return false;
+    }
+  }
+  if (resolvePhotoUrl(value)) return false;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(value)) return false;
+  return true;
+}
+
+/** Key used to look up a prefetched photo buffer or data URI. */
+export function photoLookupKey(photo: string): string | undefined {
+  return resolvePhotoUrl(photo) ?? (isLocalPhotoPath(photo) ? photo.trim() : undefined);
+}
+
 export function isSupportedPhotoUrl(photo: string): boolean {
-  return resolvePhotoUrl(photo) !== undefined;
+  return photoLookupKey(photo) !== undefined;
 }
