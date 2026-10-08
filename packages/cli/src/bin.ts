@@ -4,6 +4,7 @@ import { dirname, join, resolve } from 'node:path';
 import {
   compileComposeDirectory,
   compileComposeYaml,
+  ComposeValidationError,
   lintComposeFiles,
   requireFeature,
   renderHtmlSlideDeck,
@@ -175,9 +176,7 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
   }
 }
 
-class LintFailedError extends Error {}
-
-/** Loads input files and lints them; prints diagnostics and throws {@link LintFailedError} on errors. */
+/** Loads input files and lints them; prints diagnostics and throws {@link ComposeValidationError} on errors. */
 function loadAndLint(
   absolute: string,
   format: 'text' | 'json',
@@ -198,7 +197,19 @@ function loadAndLint(
   }
 
   if (!result.ok) {
-    throw new LintFailedError();
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    const source = errors[0]?.source ?? files[0]?.path ?? 'compose';
+    const syntaxError = errors.some((d) => d.code.startsWith('yaml-'));
+    throw new ComposeValidationError(
+      syntaxError ? `Invalid YAML in ${source}` : `Compose validation failed for ${source}`,
+      errors.map((d) => ({
+        path: d.path,
+        message: d.message,
+        line: d.line,
+        column: d.column,
+        ...(d.hint ? { hint: d.hint } : {}),
+      })),
+    );
   }
   return { files, isDirectory };
 }
@@ -274,7 +285,9 @@ async function main() {
     }
     await runCompile(args);
   } catch (error) {
-    if (!(error instanceof LintFailedError)) {
+    if (error instanceof ComposeValidationError) {
+      console.error(`${error.code}: ${error.message}`);
+    } else {
       const message = error instanceof Error ? error.message : String(error);
       console.error(`Error: ${message}`);
     }
