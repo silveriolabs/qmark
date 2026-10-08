@@ -133,7 +133,7 @@ function answerSlideHtml(
   <div class="content">
   <p class="kicker">Answer</p>
   <h2>${stem}</h2>
-  <ul>${answerBody}</ul>
+  <ul class="answer-lines">${answerBody}</ul>
   </div>
   ${stamp}
 </section>`;
@@ -232,6 +232,7 @@ export function renderHtmlSlideDeck(
       .photo-right .photo { order: 0; }
     }
     ul { font-size: 1.25rem; line-height: 1.6; }
+    .slide-answer .answer-lines { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 700; color: #dc2626; line-height: 1.3; }
     .answer-key { padding: 2rem clamp(1.5rem, 5vw, 4rem); }
     .answer-key summary {
       cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 0.5rem;

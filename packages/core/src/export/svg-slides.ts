@@ -224,9 +224,9 @@ function renderSlide(
     }
   } else {
     for (const line of formatAnswerLines(question)) {
-      const wrapped = wrapText(line, contentW, 18);
-      parts.push(textBlock(textX, y, wrapped, 18, '#0f172a'));
-      y += wrapped.length * 24;
+      const wrapped = wrapText(line, contentW, 32);
+      parts.push(textBlock(textX, y, wrapped, 32, '#dc2626', '700'));
+      y += wrapped.length * 40;
     }
   }
 

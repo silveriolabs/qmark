@@ -24,6 +24,14 @@ declare const __filename: string;
 const require = createRequire(__filename);
 const { version } = require('../package.json') as { version: string };
 
+const LOGO = `
+ ####  #   #   #   ####  #  #
+#    # ## ##  # #  #   # # #
+#  # # # # # ##### ####  ##
+#   ## #   # #   # # #   # #
+ ####  #   # #   # #  #  #  #
+`;
+
 const USAGE = `qmark compile <file-or-directory> [options]
 qmark lint <file-or-directory> [--format text|json]
 
@@ -201,7 +209,7 @@ function runLint(argv: string[]) {
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]!;
     if (arg === '-h' || arg === '--help') {
-      console.log(USAGE);
+      console.log(`${LOGO}\n${USAGE}`);
       return;
     }
     if (arg === '--format') {
@@ -236,12 +244,12 @@ async function main() {
   const [, , command, ...rest] = process.argv;
 
   if (command === '-v' || command === '--version') {
-    console.log(version);
+    console.log(`${LOGO}\n${version}`);
     process.exit(0);
   }
 
   if (!command || command === '-h' || command === '--help') {
-    console.log(USAGE);
+    console.log(`${LOGO}\n${USAGE}`);
     process.exit(0);
   }
 
@@ -257,11 +265,11 @@ async function main() {
     }
     const args = parseArgs(rest);
     if ('version' in args) {
-      console.log(version);
+      console.log(`${LOGO}\n${version}`);
       process.exit(0);
     }
     if (args.help) {
-      console.log(USAGE);
+      console.log(`${LOGO}\n${USAGE}`);
       process.exit(0);
     }
     await runCompile(args);

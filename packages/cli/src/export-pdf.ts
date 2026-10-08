@@ -168,10 +168,11 @@ export async function writeQuizPdf(
           addQuestionPage(doc, photoFor(question, photos), question.photoAnchor ?? DEFAULT_PHOTO_ANCHOR);
           doc.fontSize(10).fillColor('#666').text('ANSWER');
           doc.fillColor('#000').moveDown(0.5).fontSize(20).text(question.question);
-          doc.moveDown().fontSize(26);
+          doc.moveDown().fontSize(36).fillColor('#dc2626');
           for (const line of formatAnswerLines(question)) {
             doc.text(line);
           }
+          doc.fillColor('#000');
           break;
         }
       }
