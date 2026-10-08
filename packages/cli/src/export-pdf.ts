@@ -4,7 +4,7 @@ import {
   DEFAULT_PHOTO_ANCHOR,
   formatAnswerLines,
   iterateDeckFrames,
-  resolvePhotoUrl,
+  photoLookupKey,
   shouldWatermarkExport,
   type PhotoAnchor,
   type QMarkTier,
@@ -94,8 +94,8 @@ function addQuestionPage(doc: PDFKit.PDFDocument, photo: Buffer | undefined, anc
 }
 
 function photoFor(question: QuestionAst, photos: Map<string, Buffer>): Buffer | undefined {
-  const url = question.photo ? resolvePhotoUrl(question.photo) : undefined;
-  return url ? photos.get(url) : undefined;
+  const key = question.photo ? photoLookupKey(question.photo) : undefined;
+  return key ? photos.get(key) : undefined;
 }
 
 function addSectionIntroPage(doc: PDFKit.PDFDocument, section: SectionAst): void {

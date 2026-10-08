@@ -1,5 +1,5 @@
 import type { QuestionAst, QuizAst, SectionAst } from '../ast/types';
-import { DEFAULT_PHOTO_ANCHOR, resolvePhotoUrl } from '../photo/resolve-photo-url';
+import { DEFAULT_PHOTO_ANCHOR, photoLookupKey } from '../photo/resolve-photo-url';
 import { shouldWatermarkExport, type QMarkTier } from '../tier/features';
 import { WATERMARK_TEXT } from '../watermark/watermark';
 import { iterateDeckFrames } from './deck-sequence';
@@ -315,8 +315,8 @@ export function renderSvgSlideDeck(
   const showWatermark = shouldWatermarkExport(tier);
   const groups: string[] = [];
   const photoHref = (question: QuestionAst): string | undefined => {
-    const url = question.photo ? resolvePhotoUrl(question.photo) : undefined;
-    return url ? options.photos?.get(url) : undefined;
+    const key = question.photo ? photoLookupKey(question.photo) : undefined;
+    return key ? options.photos?.get(key) : undefined;
   };
 
   let slideIndex = 0;

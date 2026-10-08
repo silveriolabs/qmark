@@ -38,7 +38,8 @@ const sharedQuestionFields = {
     .string()
     .min(1)
     .refine(isSupportedPhotoUrl, {
-      message: 'photo must be an http://, https://, or s3://bucket/key URL',
+      message:
+        'photo must be an http://, https://, or s3://bucket/key URL, or a local file path',
     })
     .optional(),
   photo_anchor: photoAnchorSchema.optional(),

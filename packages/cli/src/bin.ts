@@ -115,7 +115,11 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
   const outDir = join(process.cwd(), 'qmark-out');
   mkdirSync(outDir, { recursive: true });
 
-  const photos = args.pdf || args.svg ? await prefetchPhotos(ast) : undefined;
+  const photoBaseDir = isDirectory ? absolute : dirname(absolute);
+  const photos =
+    args.pdf || args.svg || args.html
+      ? await prefetchPhotos(ast, { baseDir: photoBaseDir })
+      : undefined;
 
   if (args.pdf) {
     requireFeature(args.tier, 'pdf-export');
@@ -130,7 +134,17 @@ async function runCompile(args: ReturnType<typeof parseArgs> & { help: false }) 
     const out =
       args.output && !args.pdf ? args.output : join(outDir, `${slugify(ast.name)}.html`);
     mkdirSync(dirname(out), { recursive: true });
-    writeFileSync(out, renderHtmlSlideDeck(ast, { tier: args.tier }), 'utf8');
+    const htmlPhotos = new Map<string, string>();
+    for (const [key, buf] of photos ?? []) {
+      if (!key.startsWith('http://') && !key.startsWith('https://')) {
+        htmlPhotos.set(key, photoDataUri(buf));
+      }
+    }
+    writeFileSync(
+      out,
+      renderHtmlSlideDeck(ast, { tier: args.tier, photos: htmlPhotos }),
+      'utf8',
+    );
     console.log(`Wrote ${out}`);
   }
 

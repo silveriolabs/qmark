@@ -179,6 +179,22 @@ function find(diagnostics: LintDiagnostic[], code: string): LintDiagnostic {
   find(result.diagnostics, 'invalid-file-set');
 }
 
+// Local photo paths are valid; unknown URL schemes are not.
+{
+  const local = lint(`      - question: Q
+        type: boolean
+        answer: true
+        photo: ./images/figure.png
+`);
+  assert.equal(local.length, 0);
+  const bad = lint(`      - question: Q
+        type: boolean
+        answer: true
+        photo: ftp://example.com/a.png
+`);
+  assert.ok(bad.some((d) => d.path.endsWith('photo')));
+}
+
 // parseComposeYaml attaches line/column to issues.
 {
   assert.throws(

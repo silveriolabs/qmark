@@ -1,4 +1,7 @@
-import { resolvePhotoUrl, type QuizAst } from '@silverio-labs/qmark-core';
+import { readFileSync } from 'node:fs';
+import { isAbsolute, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { isLocalPhotoPath, photoLookupKey, resolvePhotoUrl, type QuizAst } from '@silverio-labs/qmark-core';
 
 const FETCH_TIMEOUT_MS = 15_000;
 const MAX_PHOTO_BYTES = 20 * 1024 * 1024;
@@ -38,30 +41,60 @@ export function photoDataUri(buf: Buffer): string {
   return `data:${mime};base64,${buf.toString('base64')}`;
 }
 
+function readLocalPhoto(photo: string, baseDir: string): Buffer {
+  const value = photo.trim();
+  const filePath = /^file:/i.test(value)
+    ? fileURLToPath(value)
+    : isAbsolute(value)
+      ? value
+      : resolve(baseDir, value);
+  const buf = readFileSync(filePath);
+  if (!isPng(buf) && !isJpeg(buf)) {
+    throw new Error('unsupported format (export supports PNG and JPEG)');
+  }
+  if (buf.length > MAX_PHOTO_BYTES) {
+    throw new Error(`larger than ${MAX_PHOTO_BYTES / 1024 / 1024} MB`);
+  }
+  return buf;
+}
+
+export interface PrefetchPhotosOptions {
+  /** Directory that relative photo paths are resolved from. */
+  baseDir?: string;
+  onWarning?: (message: string) => void;
+}
+
 /**
- * Downloads every publicly reachable question photo. Photos that fail are
- * reported via `onWarning` and omitted, so the PDF still renders.
+ * Loads every question photo: remote URLs are downloaded, local paths are read
+ * from disk. Photos that fail are reported via `onWarning` and omitted.
  */
 export async function prefetchPhotos(
   ast: QuizAst,
-  onWarning: (message: string) => void = (m) => console.warn(m),
+  options: PrefetchPhotosOptions = {},
 ): Promise<Map<string, Buffer>> {
-  const urls = new Set<string>();
+  const onWarning = options.onWarning ?? ((m) => console.warn(m));
+  const baseDir = options.baseDir ?? process.cwd();
+  const keys = new Set<string>();
   for (const section of ast.sections) {
     for (const question of section.questions) {
-      const url = question.photo ? resolvePhotoUrl(question.photo) : undefined;
-      if (url) urls.add(url);
+      const key = question.photo ? photoLookupKey(question.photo) : undefined;
+      if (key) keys.add(key);
     }
   }
 
   const photos = new Map<string, Buffer>();
   await Promise.all(
-    [...urls].map(async (url) => {
+    [...keys].map(async (key) => {
       try {
-        photos.set(url, await fetchPhoto(url));
+        const remote = resolvePhotoUrl(key);
+        const buf =
+          remote && !isLocalPhotoPath(key)
+            ? await fetchPhoto(remote)
+            : readLocalPhoto(key, baseDir);
+        photos.set(key, buf);
       } catch (error) {
         const reason = error instanceof Error ? error.message : String(error);
-        onWarning(`Warning: skipping photo ${url}: ${reason}`);
+        onWarning(`Warning: skipping photo ${key}: ${reason}`);
       }
     }),
   );
