@@ -101,7 +101,7 @@ Optional:
 - `photo` is optional. Omit both `photo` and `photo_anchor` when there is no image.
 - Do not set `photo_anchor` without `photo`.
 - `photo` must be `https://…`, `http://…`, `s3://bucket/key` (the bucket must allow public reads), or a local path (`./images/figure.png`, an absolute path, or `file://`). Paths are resolved from the quiz file’s directory. Default anchor is `right`.
-- HTML export links to a remote URL. PDF and SVG read PNG or JPEG at compile time (downloaded or from disk). A local path is embedded in HTML the same way.
+- HTML export links to a remote URL. PDF and SVG read PNG, JPG, JPEG, WEBP, or AVIF at compile time (downloaded or from disk). WebP and AVIF are converted to PNG for embedding. A local path is embedded in HTML the same way.
 
 ### Linting
 
